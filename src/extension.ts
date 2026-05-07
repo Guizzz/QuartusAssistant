@@ -93,6 +93,8 @@ async function updateButtonsVisibility() {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+    
+    const output = vscode.window.createOutputChannel("Quartus");
 
 	// =========================
     // Build compile
@@ -101,9 +103,10 @@ export function activate(context: vscode.ExtensionContext) {
         'vhdl-assistant.build',
         async () => {
 
+            const logger = new QuartusLogger(output);
+
             buildStatus.text = "$(sync~spin) Building Quartus...";
             buildStatus.tooltip = "Quartus build running";
-            const output = vscode.window.createOutputChannel("Quartus");
             output.show();
 
             const projectName = await getProjectName();
@@ -133,7 +136,6 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			const full_path = path.join(binPath, 'quartus_sh');
 
-			const logger = new QuartusLogger(output);
 
             logger.startBuild(projectName);
 
@@ -186,9 +188,10 @@ export function activate(context: vscode.ExtensionContext) {
         'vhdl-assistant.flash',
         async () => {
             
+            const logger = new QuartusLogger(output);
+
             buildStatus.text = "$(sync~spin) Flashing Quartus...";
             buildStatus.tooltip = "Quartus flash running";
-            const output = vscode.window.createOutputChannel("Quartus");
             output.show();
 
             const projectName = await getProjectName();
@@ -217,6 +220,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 			//quartus_pgm -m jtag -o "p;output_files/SignalGenerator.pof"
 
+            logger.startBuild(projectName);
+
             const proc = spawn(
 				full_path,
 				['-m', 'jtag', '-o', firm],
@@ -230,16 +235,16 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 
             proc.stdout.on('data', (d) => {
-				var line:string = d.toString();
-                output.append(line);
+                logger.parseChunk(d.toString());
             });
 
             proc.stderr.on('data', (d) => {
-                output.append(d.toString());
+                logger.parseChunk(d.toString());
             });
 
             proc.on('close', (code) => {
 
+                logger.finishBuild(code === 0);
                 if (code === 0) {
                     buildStatus.text = "$(check) Flash OK";
                     buildStatus.tooltip = "Flash completed successfully";

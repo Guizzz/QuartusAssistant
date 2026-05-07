@@ -186,7 +186,7 @@ export class QuartusLogger {
         if (msg.code === 'IQEXE_ERROR_COUNT') {
 
             if (msg.text.includes('successful')) {
-                return `✅ ${msg.text}`;
+                return `✅ ${msg.text}\n`;
             }
 
             return `❌ ${msg.text}`;
@@ -205,7 +205,7 @@ export class QuartusLogger {
                 return `❌ ${msg.text}`;
 
             case 'success':
-                return `✅ ${msg.text}`;
+                return `✅ ${msg.text}\n`;
 
             default:
 
@@ -224,7 +224,7 @@ export class QuartusLogger {
 
                 if (msg.text.startsWith("Running Quartus"))
                 {
-                    return `\n[${msg.text}]`;
+                    return `[${msg.text}]\n`;
                 }
 
                 return `${msg.text}`;
