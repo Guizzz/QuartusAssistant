@@ -98,10 +98,12 @@ export class QuartusLogger {
             this.errors++;
         }
 
-        // render
-        this.output.appendLine(
-            this.formatMessage(msg)
-        );
+        const log = this.formatMessage(msg);
+        
+        if (log !== '')
+        {
+            this.output.appendLine(log);
+        }
     }
 
     private extractMessage(line: string): QuartusMessage | null {

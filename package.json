@@ -16,20 +16,24 @@
   "contributes": {
     "commands": [
       {
+        "command": "vhdl-assistant.pinplanner",
+        "title": "Quartus: Open Pin Planner"
+      },
+      {
         "command": "vhdl-assistant.build",
-        "title": "MAX V: Build"
+        "title": "Quartus: Build"
       },
       {
         "command": "vhdl-assistant.setQuartusPath",
-        "title": "MAX V: Set Quartus Path"
+        "title": "Quartus: Set Quartus Path"
       },
       {
         "command": "vhdl-assistant.flash",
-        "title": "MAX V: Flash"
+        "title": "Quartus: Flash"
       }
     ],
     "configuration": {
-      "title": "MAX V / Quartus",
+      "title": "Quartus",
       "properties": {
         "maxv.quartusPath": {
           "type": "string",

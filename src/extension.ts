@@ -92,10 +92,128 @@ async function updateButtonsVisibility() {
     }
 }
 
+async function runQuartusTask(options: {
+    command: string;
+    tool: string;
+    args: string[];
+    statusRunning: string;
+    statusSuccess: string;
+    statusFail: string;
+    successMessage: (project: string) => string;
+    failMessage: (project: string) => string;
+    detached?: boolean;
+}) {
+
+    const output = vscode.window.createOutputChannel("Quartus");
+    const logger = new QuartusLogger(output);
+
+    buildStatus.text = `$(sync~spin) ${options.statusRunning}`;
+    buildStatus.tooltip = options.statusRunning;
+
+    output.show();
+
+    const [projectName, projectFolder] = await Promise.all([
+        getProjectName(),
+        getProjectDir()
+    ]);
+
+    if (!projectName)
+    {
+        vscode.window.showErrorMessage("No Quartus .qpf project found");
+        return;
+    }
+
+    if (!projectFolder) {
+        vscode.window.showErrorMessage("Error getting project directory path");
+        return;
+    }
+
+    const binPath = getQuartusBin(options.tool);
+
+    if (!binPath) {
+        vscode.window.showErrorMessage("Quartus path not configured");
+        return;
+    }
+
+    const executable = path.join(binPath, options.command);
+
+    logger.startBuild(projectName);
+
+    const proc = spawn(
+        executable,
+        options.args,
+        {
+            cwd: projectFolder,
+            env: {
+                ...process.env,
+                PATH: `${binPath};${process.env.PATH}`
+            }
+        }
+    );
+
+    if (options.detached) {
+
+        proc.unref();
+
+        if (options.statusSuccess) {
+            buildStatus.text =
+                `$(check) ${options.statusSuccess}`;
+        }
+
+        if (options.successMessage) {
+            vscode.window.showInformationMessage(
+                options.successMessage(projectName)
+            );
+        }
+
+        return;
+    }
+
+    proc.stdout.on('data', d => {
+        logger.parseChunk(d.toString());
+    });
+
+    proc.stderr.on('data', d => {
+        logger.parseChunk(d.toString());
+    });
+
+    proc.on('error', err => {
+
+        buildStatus.text = "$(error) Spawn failed";
+
+        vscode.window.showErrorMessage(`Failed to start process: ${err.message}`);
+    });
+
+    proc.on('close', code => {
+
+        const success = code === 0;
+
+        logger.finishBuild(success);
+
+        if (success) 
+        {
+            buildStatus.text = `$(check) ${options.statusSuccess}`;
+            buildStatus.tooltip = options.statusSuccess;
+
+            vscode.window.showInformationMessage(options.successMessage(projectName));
+
+            setTimeout(() => {
+                buildStatus.text = "$(gear) Quartus: idle";
+                buildStatus.tooltip = "Idle";
+            }, 3000);
+        } 
+        else 
+        {
+            buildStatus.text = `$(error) ${options.statusFail}`;
+            buildStatus.tooltip = options.statusFail;
+
+            vscode.window.showErrorMessage(options.failMessage(projectName));
+        }
+    });
+}
+
 export function activate(context: vscode.ExtensionContext) {
     
-    const output = vscode.window.createOutputChannel("Quartus");
-
 	// =========================
     // Build compile
     // =========================
@@ -103,80 +221,24 @@ export function activate(context: vscode.ExtensionContext) {
         'vhdl-assistant.build',
         async () => {
 
-            const logger = new QuartusLogger(output);
-
-            buildStatus.text = "$(sync~spin) Building Quartus...";
-            buildStatus.tooltip = "Quartus build running";
-            output.show();
-
             const projectName = await getProjectName();
-			const projectFolder = await getProjectDir();
 
             if (!projectName) {
-                vscode.window.showErrorMessage(
-                    "No Quartus .qpf project found"
-                );
+                vscode.window.showErrorMessage("No Quartus .qpf project found");
                 return;
             }
 
-			if (!projectFolder) {
-                vscode.window.showErrorMessage(
-                    "Error getting project directory path"
-                );
-                return;
-            }
+            await runQuartusTask({
+                command: 'quartus_sh',
+                tool: 'quartus',
+                args: ['--flow', 'compile', projectName],
 
-			const binPath = getQuartusBin('quartus');
+                statusRunning: 'Building Quartus...',
+                statusSuccess: 'Build OK',
+                statusFail: 'Build failed',
 
-			if (!binPath) {
-				vscode.window.showErrorMessage(
-					"Quartus path not configured"
-				);
-				return;
-			}
-			const full_path = path.join(binPath, 'quartus_sh');
-
-
-            logger.startBuild(projectName);
-
-            const proc = spawn(
-				full_path,
-				['--flow', 'compile', projectName],
-				{
-					cwd: projectFolder,
-					env: {
-						...process.env,
-						PATH: binPath + ';' + process.env.PATH
-					}
-				}
-			);
-
-            proc.stdout.on('data', (d) => {
-                logger.parseChunk(d.toString());
-            });
-
-            proc.stderr.on('data', (d) => {
-                logger.parseChunk(d.toString());
-            });
-
-            proc.on('close', (code) => {
-                logger.finishBuild(code === 0);
-                if (code === 0) {
-                    buildStatus.text = "$(check) Build OK";
-                    buildStatus.tooltip = "Build completed successfully";
-
-                    setTimeout(() => {
-                        buildStatus.text = "$(gear) Quartus: idle";
-                    }, 3000);
-
-                    vscode.window.showInformationMessage(`Build complete: ${projectName}`);
-                } 
-                else {
-                    buildStatus.text = "$(error) Build failed";
-                    buildStatus.tooltip = "Quartus build failed";
-
-                    vscode.window.showErrorMessage(`Build failed: ${projectName}`);
-                }
+                successMessage: p => `Build complete: ${p}`,
+                failMessage: p => `Build failed: ${p}`
             });
         }
     );
@@ -187,80 +249,30 @@ export function activate(context: vscode.ExtensionContext) {
     const flash = vscode.commands.registerCommand(
         'vhdl-assistant.flash',
         async () => {
-            
-            const logger = new QuartusLogger(output);
-
-            buildStatus.text = "$(sync~spin) Flashing Quartus...";
-            buildStatus.tooltip = "Quartus flash running";
-            output.show();
 
             const projectName = await getProjectName();
-			const projectFolder = await getProjectDir();
-			const binPath = getQuartusBin('qprogrammer');
-			
+
             if (!projectName) {
-                vscode.window.showErrorMessage("No Quartus .qpf project found");
-                return;
-            }
-			
-			if (!projectFolder) {
-                vscode.window.showErrorMessage("Error getting project directory path");
+                vscode.window.showErrorMessage(
+                    "No Quartus .qpf project found"
+                );
                 return;
             }
 
-			if (!binPath) {
-				vscode.window.showErrorMessage("Quartus path not configured");
-				return;
-			}
-			
-			const full_path = path.join(binPath, 'quartus_pgm');
+            const firmware = `p;output_files/${projectName}.pof`;
 
-			const firm = "p;output_files/"+ projectName + ".pof";
-			output.appendLine("Flashing: " + projectName);
 
-			//quartus_pgm -m jtag -o "p;output_files/SignalGenerator.pof"
+            await runQuartusTask({
+                command: 'quartus_pgm',
+                tool: 'qprogrammer',
+                args: ['-m', 'jtag', '-o', firmware],
 
-            logger.startBuild(projectName);
+                statusRunning: 'Flashing Quartus...',
+                statusSuccess: 'Flash OK',
+                statusFail: 'Flash failed',
 
-            const proc = spawn(
-				full_path,
-				['-m', 'jtag', '-o', firm],
-				{
-					cwd: projectFolder,
-					env: {
-						...process.env,
-						PATH: binPath + ';' + process.env.PATH
-					}
-				}
-			);
-
-            proc.stdout.on('data', (d) => {
-                logger.parseChunk(d.toString());
-            });
-
-            proc.stderr.on('data', (d) => {
-                logger.parseChunk(d.toString());
-            });
-
-            proc.on('close', (code) => {
-
-                logger.finishBuild(code === 0);
-                if (code === 0) {
-                    buildStatus.text = "$(check) Flash OK";
-                    buildStatus.tooltip = "Flash completed successfully";
-
-                    setTimeout(() => {
-                        buildStatus.text = "$(gear) Quartus: idle";
-                    }, 3000);
-
-                    vscode.window.showInformationMessage(
-                        `Flash complete: ${projectName}`
-                    );
-                } else {
-                    vscode.window.showErrorMessage(
-                        `Flash failed: ${projectName}`
-                    );
-                }
+                successMessage: p => `Flash complete: ${p}`,
+                failMessage: p => `Flash failed: ${p}`
             });
         }
     );
@@ -300,6 +312,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(build);
 	context.subscriptions.push(flash);
 	context.subscriptions.push(setPathCmd);
+	context.subscriptions.push(pinPlanner);
 
     createStatusBar(context);
 
