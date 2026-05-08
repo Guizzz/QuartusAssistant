@@ -33,6 +33,11 @@
         "id": "qsf",
         "extensions": [".qsf"],
         "aliases": ["QSF", "Quartus Settings File"]
+      },
+      {
+        "id": "qpf",
+        "extensions": [".qpf"],
+        "aliases": ["QPF", "Quartus Project File"]
       }
     ],
     "configuration": {

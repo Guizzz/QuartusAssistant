@@ -3,6 +3,7 @@ import * as path from 'path';
 import { spawn } from 'child_process';
 import { QuartusLogger } from './quartusLogger';
 import { QsfTokensProvider, legend } from './qsfTokensProvider';
+import { setupMaterialIcons } from './setIcon';  
 
 let buildButton: vscode.StatusBarItem;
 let flashButton: vscode.StatusBarItem;
@@ -84,6 +85,7 @@ async function updateButtonsVisibility() {
     const hasProject = await hasQuartusProject();
 
     if (hasProject) {
+        setupMaterialIcons();
         buildButton.show();
         flashButton.show();
         buildStatus.show();
@@ -339,10 +341,19 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // =========================
-    // .qsf Formatter
+    // .qsf Highlight
     // =========================
-    const formatter = vscode.languages.registerDocumentSemanticTokensProvider(
+    const qsf_formatter = vscode.languages.registerDocumentSemanticTokensProvider(
         { language: 'qsf' },
+        new QsfTokensProvider(),
+        legend
+    );
+
+    // =========================
+    // .qpf Highlight
+    // =========================
+    const qpf_formatter = vscode.languages.registerDocumentSemanticTokensProvider(
+        { language: 'qpf' },
         new QsfTokensProvider(),
         legend
     );
@@ -350,7 +361,8 @@ export function activate(context: vscode.ExtensionContext) {
     diagnostics = vscode.languages.createDiagnosticCollection('qsf');
 
     context.subscriptions.push(diagnostics);
-    context.subscriptions.push(formatter);
+    context.subscriptions.push(qsf_formatter);
+    context.subscriptions.push(qpf_formatter);
     context.subscriptions.push(build);
 	context.subscriptions.push(flash);
 	context.subscriptions.push(setPathCmd);
@@ -360,9 +372,9 @@ export function activate(context: vscode.ExtensionContext) {
     updateButtonsVisibility();
 
     context.subscriptions.push(
-    vscode.workspace.onDidOpenTextDocument(lintDocument),
-    vscode.workspace.onDidChangeTextDocument(e => lintDocument(e.document))
-  );
+        vscode.workspace.onDidOpenTextDocument(lintDocument),
+        vscode.workspace.onDidChangeTextDocument(e => lintDocument(e.document))
+    );
 }
 
 vscode.workspace.onDidChangeWorkspaceFolders(() => {
