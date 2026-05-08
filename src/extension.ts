@@ -54,7 +54,7 @@ function createStatusBar(context: vscode.ExtensionContext) {
     );
 
     buildButton.text = "$(symbol-property) Build";
-    buildButton.command = "vhdl-assistant.build";
+    buildButton.command = "quartus-assistant.build";
     buildButton.tooltip = "Compile Quartus project";
 
     flashButton = vscode.window.createStatusBarItem(
@@ -63,7 +63,7 @@ function createStatusBar(context: vscode.ExtensionContext) {
     );
 
     flashButton.text = "$(arrow-down) Flash";
-    flashButton.command = "vhdl-assistant.flash";
+    flashButton.command = "quartus-assistant.flash";
     flashButton.tooltip = "Program FPGA via JTAG";
 
     buildStatus = vscode.window.createStatusBarItem(
@@ -249,7 +249,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Build compile
     // =========================
     const build = vscode.commands.registerCommand(
-        'vhdl-assistant.build',
+        'quartus-assistant.build',
         async () => {
 
             const projectName = await getProjectName();
@@ -278,7 +278,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Flash program
     // =========================
     const flash = vscode.commands.registerCommand(
-        'vhdl-assistant.flash',
+        'quartus-assistant.flash',
         async () => {
 
             const projectName = await getProjectName();
@@ -312,7 +312,7 @@ export function activate(context: vscode.ExtensionContext) {
     // SET QUARTUS PATH
     // =========================
     const setPathCmd = vscode.commands.registerCommand(
-        'vhdl-assistant.setQuartusPath',
+        'quartus-assistant.setQuartusPath',
         async () => {
 
             const result = await vscode.window.showOpenDialog({

@@ -1,6 +1,6 @@
 {
-  "name": "vhdl-assistant",
-  "displayName": "VHDL Assistant",
+  "name": "quartus-assistant",
+  "displayName": "Quartus Assistant",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -16,15 +16,15 @@
   "contributes": {
     "commands": [
       {
-        "command": "vhdl-assistant.build",
+        "command": "quartus-assistant.build",
         "title": "Quartus: Build"
       },
       {
-        "command": "vhdl-assistant.setQuartusPath",
+        "command": "quartus-assistant.setQuartusPath",
         "title": "Quartus: Set Quartus Path"
       },
       {
-        "command": "vhdl-assistant.flash",
+        "command": "quartus-assistant.flash",
         "title": "Quartus: Flash"
       }
     ],
