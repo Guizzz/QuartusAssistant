@@ -216,6 +216,7 @@ async function runQuartusTask(options: {
 
 function lintDocument(document: vscode.TextDocument) {
   const diags: vscode.Diagnostic[] = [];
+  if(!document.fileName.endsWith("qsf")) {return;}
 
   for (let i = 0; i < document.lineCount; i++) {
     const line = document.lineAt(i).text;
