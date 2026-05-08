@@ -28,6 +28,13 @@
         "title": "Quartus: Flash"
       }
     ],
+    "languages": [
+      {
+        "id": "qsf",
+        "extensions": [".qsf"],
+        "aliases": ["QSF", "Quartus Settings File"]
+      }
+    ],
     "configuration": {
       "title": "Quartus",
       "properties": {

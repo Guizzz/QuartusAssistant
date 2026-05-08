@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { spawn } from 'child_process';
 import { QuartusLogger } from './quartusLogger';
+import { QsfTokensProvider, legend } from './qsfTokensProvider';
 
 let buildButton: vscode.StatusBarItem;
 let flashButton: vscode.StatusBarItem;
 let buildStatus: vscode.StatusBarItem;
+let diagnostics: vscode.DiagnosticCollection;
 
 async function getProjectName(): Promise<string | null> {
 
@@ -212,6 +214,32 @@ async function runQuartusTask(options: {
     });
 }
 
+function lintDocument(document: vscode.TextDocument) {
+  const diags: vscode.Diagnostic[] = [];
+
+  for (let i = 0; i < document.lineCount; i++) {
+    const line = document.lineAt(i).text;
+
+    if (line.includes('  ') && !line.startsWith("#")) {
+      diags.push(new vscode.Diagnostic(
+        new vscode.Range(i, 0, i, line.length),
+        'Spazi multipli non necessari',
+        vscode.DiagnosticSeverity.Warning
+      ));
+    }
+
+    if (line.startsWith('set_global_assignment') && !line.includes('-name')) {
+      diags.push(new vscode.Diagnostic(
+        new vscode.Range(i, 0, i, line.length),
+        'Possibile assignment QSF incompleto (manca -name)',
+        vscode.DiagnosticSeverity.Error
+      ));
+    }
+  }
+
+  diagnostics.set(document.uri, diags);
+}
+
 export function activate(context: vscode.ExtensionContext) {
     
 	// =========================
@@ -309,14 +337,31 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    // =========================
+    // .qsf Formatter
+    // =========================
+    const formatter = vscode.languages.registerDocumentSemanticTokensProvider(
+        { language: 'qsf' },
+        new QsfTokensProvider(),
+        legend
+    );
+
+    diagnostics = vscode.languages.createDiagnosticCollection('qsf');
+
+    context.subscriptions.push(diagnostics);
+    context.subscriptions.push(formatter);
     context.subscriptions.push(build);
 	context.subscriptions.push(flash);
 	context.subscriptions.push(setPathCmd);
-	context.subscriptions.push(pinPlanner);
 
     createStatusBar(context);
 
     updateButtonsVisibility();
+
+    context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument(lintDocument),
+    vscode.workspace.onDidChangeTextDocument(e => lintDocument(e.document))
+  );
 }
 
 vscode.workspace.onDidChangeWorkspaceFolders(() => {
