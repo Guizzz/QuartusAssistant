@@ -16,10 +16,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "vhdl-assistant.pinplanner",
-        "title": "Quartus: Open Pin Planner"
-      },
-      {
         "command": "vhdl-assistant.build",
         "title": "Quartus: Build"
       },
