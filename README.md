@@ -13,7 +13,6 @@ It provides compile/flash automation and syntax highlighting for Quartus project
 - 📁 Support for `.qpf` and `.qsf` files
 - 🎨 Syntax highlighting for Quartus project files
 - 🔧 Simple workflow integration for FPGA/CPLD development
-- 📦 Packaged as `.vsix` for easy installation
 
 ---
 
@@ -29,11 +28,9 @@ It provides compile/flash automation and syntax highlighting for Quartus project
 
 ### Option 1 — Install from release (.vsix)
 
-Download the latest `.vsix` file from the GitHub Releases page, then install it:
+Download the latest `.vsix` file from the GitHub Releases page, then open Visual Studio Coode:
 
-```bash
-code --install-extension quartusassistant-0.1.0.vsix
-````
+> _Ctrl-Shift-X_ -> "Install from .vsix..."
 
 ---
 
@@ -52,6 +49,10 @@ npm install -g @vscode/vsce
 vsce package
 ```
 
+```bash
+code --install-extension quartusassistant-0.1.0.vsix
+````
+
 ---
 
 ## 🔨 Usage
@@ -59,15 +60,21 @@ vsce package
 Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and use:
 
 ### Compile project
-
+To compile de project use:
 ```
 Quartus: Build
 ```
 
 ### Flash CPLD
-
+After plug in your board, you can use this command to program your CPLD:
 ```
 Quartus: Flash Device
+```
+
+### Configure Quartus Path
+To make everythigs works, you must have Quartus installed, and use this path to configure his installation path:
+```
+Quartus: Set PATH
 ```
 
 ---
@@ -81,31 +88,6 @@ Automatic support for:
 
 Just open the file in VS Code.
 
----
-
-## 🚀 GitHub Actions Release
-
-This project includes CI automation that:
-
-* builds the extension
-* packages `.vsix`
-* publishes a GitHub Release when a tag is pushed (`v*`)
-
-Example:
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
----
-
-## 📦 File Support
-
-| Extension | Description           |
-| --------- | --------------------- |
-| `.qpf`    | Quartus Project File  |
-| `.qsf`    | Quartus Settings File |
 
 ---
 
@@ -123,11 +105,8 @@ This extension aims to:
 
 ## 📌 Roadmap
 
-* [ ] Auto-detect Quartus project root
-* [ ] Parse Quartus compilation errors in VS Code
-* [ ] Board presets for CPLDs
+* [ ] Pin Planner integration
 * [ ] GUI panel for compile/flash
-* [ ] Integration with VS Code Tasks API
 
 ---
 
@@ -140,6 +119,5 @@ If you want to improve FPGA/CPLD tooling inside VS Code, feel free to contribute
 
 ## 📄 License
 
-MIT
+[MIT](./LICENSE)
 
-```
