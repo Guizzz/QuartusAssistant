@@ -1,11 +1,13 @@
 import * as vscode from 'vscode';
 import { registerBuildCommand } from './commands/build';
 import { registerFlashCommand } from './commands/flash';
+import { registerSetQuartusPathCommand } from './commands/setPath';
+
+import { setupMaterialIcons } from './ui/setIcon';
 import { createStatusBar, updateButtonsVisibility } from './ui/statusBar';
 import { legend, QsfTokensProvider } from './providers/qsfTokensProvider';
 import { registerQsfLint } from './lint/qsfLint';
-import { registerSetQuartusPathCommand } from './commands/setPath';
-import { setupMaterialIcons } from './ui/setIcon';
+import { QsfProvider } from './providers/qsfTabProvider';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -44,6 +46,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.workspace.onDidCreateFiles(updateButtonsVisibility),
         vscode.workspace.onDidDeleteFiles(updateButtonsVisibility)
     );
+
+    const tabView = new QsfProvider();
+    // tabView.loadData();
+    vscode.window.registerTreeDataProvider('quartus-assistant-view', tabView);
 }
 
 export function deactivate() {}

@@ -11,8 +11,6 @@ export function registerFlashCommand(context: vscode.ExtensionContext)
                             const projectName = await getProjectName();
 
                             if (!projectName) {return;}
-                            
-                            const output = vscode.window.createOutputChannel('Quartus');
 
                             await runQuartusTask({
                                 command: 'quartus_pgm',
@@ -24,7 +22,6 @@ export function registerFlashCommand(context: vscode.ExtensionContext)
                                     `p;output_files/${projectName}.pof`
                                 ],
 
-                                output: output,
                                 statusRunning: 'Flashing...',
                                 statusSuccess: 'Flash OK',
                                 statusFail: 'Flash failed',

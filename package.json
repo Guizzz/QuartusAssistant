@@ -2,7 +2,7 @@
   "name": "quartus-assistant",
   "displayName": "Quartus Assistant",
   "description": "",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "engines": {
     "vscode": "^1.118.0"
   },
@@ -59,6 +59,24 @@
           "description": "Path to Quartus installation folder (e.g. C:\\intelFPGA\\25.1std\\quartus)"
         }
       }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "myExtension",
+          "title": "Quartus Assistant",
+          "icon": "$(chip)"
+        }
+      ]
+    },
+    "views": {
+      "myExtension": [
+        {
+          "id": "quartus-assistant-view",
+          "name": "Quartus Assistant Panel",
+          "icon": "$(chip)"
+        }
+      ]
     }
   },
   "scripts": {

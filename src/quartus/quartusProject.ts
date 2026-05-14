@@ -7,6 +7,12 @@ export async function getProjectFile()
     return files[0];
 }
 
+export async function getSettingsFile() 
+{
+    const files = await vscode.workspace.findFiles('**/*.qsf');
+    return files[0];
+}
+
 export async function getProjectName(): Promise<string | null> {
 
     const file = await getProjectFile();

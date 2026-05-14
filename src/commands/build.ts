@@ -15,13 +15,12 @@ export function registerBuildCommand(context: vscode.ExtensionContext)
                                 vscode.window.showErrorMessage("No Quartus .qpf project found");
                                 return;
                             }
-                            const output = vscode.window.createOutputChannel('Quartus');
+                            
                             await runQuartusTask({
                                 command: 'quartus_sh',
                                 tool: 'quartus',
                                 args: ['--flow', 'compile', projectName],
 
-                                output: output,
                                 statusRunning: 'Building...',
                                 statusSuccess: 'Build OK',
                                 statusFail: 'Build failed',

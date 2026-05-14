@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 
+export const quartusOutput = vscode.window.createOutputChannel('Quartus Assistant');
+
 export type QuartusSeverity =
     | 'info'
     | 'warning'

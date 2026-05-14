@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { spawn } from 'child_process';
 
-import { QuartusLogger } from './quartusLogger';
+import { QuartusLogger, quartusOutput } from './quartusLogger';
 
 import {
     getProjectDir,
@@ -12,7 +12,6 @@ import {
 
 import { getQuartusBin } from './quartusConfig';
 import { buildStatus } from '../ui/statusBar';
-import { quartusOutput } from '../ui/output';
 
 const logger = new QuartusLogger(quartusOutput);
 
@@ -26,7 +25,6 @@ export interface QuartusTaskOptions
     statusSuccess: string;
     statusFail: string;
 
-    output: vscode.OutputChannel;
     successMessage: (project: string) => string;
     failMessage: (project: string) => string;
 }
