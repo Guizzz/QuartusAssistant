@@ -1,9 +1,14 @@
-# Change Log
+# Changelog
 
-All notable changes to the "vhdl-assistant" extension will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [1.0.0] - 2026-05-08
 
-## [Unreleased]
+### Added
+- Compile Quartus projects directly from VS Code
+- Flash CPLDs from inside the editor
+- Support for `.qpf` and `.qsf` files
+- Syntax highlighting for Quartus project files
 
-- Initial release
+### Notes
+- First public release
