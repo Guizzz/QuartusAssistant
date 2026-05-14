@@ -22,14 +22,11 @@ export class QuartusLogger {
     private warnings = 0;
     private errors = 0;
 
-    constructor(
-        private output: vscode.OutputChannel
-    ) {}
+    constructor(private output: vscode.OutputChannel) {}
 
-    startBuild(project: string) {
-
+    startBuild(project: string) 
+    {
         this.output.clear();
-
         this.output.appendLine('');
         this.output.appendLine('━━━━━━━━━━━━━━━━━━━━━━━━━━');
         this.output.appendLine(`Compiling ${project}`);
@@ -54,6 +51,9 @@ export class QuartusLogger {
 
         this.output.appendLine('━━━━━━━━━━━━━━━━━━━━━━━━━━');
         this.output.appendLine('');
+
+        this.warnings = 0;
+        this.errors = 0;
     }
 
     parseChunk(chunk: string) {
