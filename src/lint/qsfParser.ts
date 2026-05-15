@@ -16,10 +16,10 @@ export async function parseQsf(fileUri: vscode.Uri)
     if(line.trimStart().startsWith("#")) {continue;}
 
     let match = line.match(/set_global_assignment -name FAMILY "(.+?)"/);
-    if (match) family = match[1];
+    if (match) {family = match[1];}
 
     match = line.match(/set_global_assignment -name DEVICE (.+)/);
-    if (match) device = match[1];
+    if (match) {device = match[1];}
 
     match = line.match(/set_location_assignment (PIN_[A-Z0-9]+) -to (\w+)/);
     if (match) {

@@ -10,7 +10,7 @@ import { registerQsfLint } from './lint/qsfLint';
 import { QsfProvider } from './providers/qsfTabProvider';
 
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
     setupMaterialIcons();
     createStatusBar(context);
@@ -48,8 +48,15 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     const tabView = new QsfProvider();
-    // tabView.loadData();
+    await tabView.loadData();
     vscode.window.registerTreeDataProvider('quartus-assistant-view', tabView);
+    vscode.workspace.onDidSaveTextDocument(async (doc) => {
+
+        if (doc.fileName.endsWith('.qsf')) {
+            await tabView.loadData();
+        }
+
+    });
 }
 
 export function deactivate() {}

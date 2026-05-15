@@ -10,7 +10,7 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
     private loading = false;
 
     async loadData() {
-        if (this.loading) {return;} // 🔥 evita re-entry
+        if (this.loading) {return;}
         this.loading = true;
 
         try {
@@ -23,9 +23,9 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
             }
 
             this.qsfData = await parseQsf(file);
-
             this.refresh();
-        } finally {
+        } 
+        finally {
             this.loading = false;
         }
     }
@@ -38,7 +38,7 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
         return element;
     }
 
-    getChildren(): vscode.TreeItem[] {
+    getChildren(element?: vscode.TreeItem): vscode.TreeItem[] {
 
         if (this.loading) {
             return [new vscode.TreeItem("Loading QSF...")];
@@ -47,25 +47,44 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
         if (!this.qsfData) {
             return [new vscode.TreeItem("No QSF loaded")];
         }
-        
-        const items: vscode.TreeItem[] = [];
 
-        if (this.qsfData.family) {
-            items.push(new vscode.TreeItem(`FAMILY: ${this.qsfData.family}`));
+        if (!element) {
+
+            const items: vscode.TreeItem[] = [];
+
+            if (this.qsfData.family) {
+                const familyItem = new vscode.TreeItem("FAMILY");
+                familyItem.description = this.qsfData.family;
+                familyItem.iconPath = new vscode.ThemeIcon("chip");
+                items.push(familyItem);
+            }
+
+            if (this.qsfData.device) {
+                const deviceItem = new vscode.TreeItem("DEVICE");
+                deviceItem.description = this.qsfData.device;
+                deviceItem.iconPath = new vscode.ThemeIcon("circuit-board");
+                items.push(deviceItem);
+            }
+
+            const pinHeader = new vscode.TreeItem(
+                "PIN ASSIGNMENTS",
+                vscode.TreeItemCollapsibleState.Expanded
+            );
+
+            items.push(pinHeader);
+
+            return items;
         }
 
-        if (this.qsfData.device) {
-            items.push(new vscode.TreeItem(`DEVICE: ${this.qsfData.device}`));
+        if (element.label === "PIN ASSIGNMENTS") 
+        {
+            return this.qsfData.pins.map((p: any) => {
+                const item = new vscode.TreeItem(p.pin);
+                item.description = p.signal;
+                return item;
+            });
         }
 
-        const pinHeader = new vscode.TreeItem("PIN ASSIGNMENTS");
-        pinHeader.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-        items.push(pinHeader);
-
-        for (const p of this.qsfData.pins) {
-            items.push(new vscode.TreeItem(`${p.signal} → ${p.pin}`));
-        }
-
-        return items;
+        return [];
     }
 }
