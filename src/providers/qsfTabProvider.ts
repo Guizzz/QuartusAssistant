@@ -66,6 +66,20 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                 items.push(deviceItem);
             }
 
+            if (this.qsfData.topLevel) {
+                const deviceItem = new vscode.TreeItem("TOP LEVEL");
+                deviceItem.description = this.qsfData.topLevel;
+                deviceItem.iconPath = new vscode.ThemeIcon("home");
+                items.push(deviceItem);
+            }
+
+            if (this.qsfData.outputFolder) {
+                const deviceItem = new vscode.TreeItem("OUTPUT DIR");
+                deviceItem.description = this.qsfData.outputFolder;
+                deviceItem.iconPath = new vscode.ThemeIcon("rocket");
+                items.push(deviceItem);
+            }
+
             const pinHeader = new vscode.TreeItem(
                 "PIN ASSIGNMENTS",
                 vscode.TreeItemCollapsibleState.Expanded
