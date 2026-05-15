@@ -2,7 +2,7 @@
   "name": "quartus-assistant",
   "displayName": "Quartus Assistant",
   "description": "",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "engines": {
     "vscode": "^1.118.0"
   },

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-05-15
+
+### Features
+
+- Introduced a new sidebar view for Quartus project inspection
+- Implemented `.qsf` parsing support to retrieve:
+
+  - FPGA family
+  - Target device
+  - Top-level entity
+  - Output directory
+- Added support for parsing pin assignments
+- Added collapsible sections for pin configuration browsing
+
 ## [0.2.0] - 2026-05-14
 
 ### Improved
