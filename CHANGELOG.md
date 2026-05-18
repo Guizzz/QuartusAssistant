@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2026-05-18
+
+### Improved
+- Improved logger, now stamp better info of the Error
+
 ## [0.3.0] - 2026-05-15
 
 ### Features
