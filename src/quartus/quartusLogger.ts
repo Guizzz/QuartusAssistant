@@ -63,11 +63,7 @@ export class QuartusLogger {
         const lines = chunk.split(/\r?\n/);
 
         for (const line of lines) {
-
-            if (!line.trim()) {
-                continue;
-            }
-
+            if (!line.trim()) {continue;}
             this.parseLine(line);
         }
     }
@@ -114,37 +110,36 @@ export class QuartusLogger {
             return null;
         }
 
-        // severity
-        const sevMatch = line.match(/"Info"|"Warning"|"Critical Warning"|"Error"/);
+        // supporta escape tipo \"
+        const stringRegex = /"((?:\\.|[^"\\])*)"/g;
 
-        if (!sevMatch) {
-            return null;
-        }
-
-        const rawSeverity = sevMatch[0].replace(/"/g, '');
-
-        // code
-        const codeMatch = line.match(/"([A-Z0-9_]+)"/);
-
-        const code = codeMatch
-            ? codeMatch[1]
-            : 'UNKNOWN';
-
-        // ALL quoted strings
-        const strings = [...line.matchAll(/"([^"]*)"/g)]
-            .map(m => m[1]);
+        const strings = [...line.matchAll(stringRegex)]
+            .map(m =>
+                m[1]
+                    .replace(/\\"/g, '"')
+                    .replace(/\\\\/g, '\\')
+                    .trim()
+            );
 
         if (strings.length < 4) {
             return null;
         }
 
-        // human readable text
-        const text = strings[3];
+        const rawSeverity = strings[0];
+
+        const code = strings[1] || 'UNKNOWN';
+
+        // messaggio principale
+        let text = strings[3];
+
+        // cleanup opzionale
+        text = text
+            .replace(/\s+/g, ' ')
+            .replace(/\\"/g, '"')
+            .trim();
 
         // stage
-        const stage =
-            strings[strings.length - 3] ||
-            'Quartus';
+        const stage = strings[strings.length - 3] || 'Quartus';
 
         return {
             stage,
@@ -187,13 +182,17 @@ export class QuartusLogger {
             return `⚠️ ${msg.text}`;
         }
 
+        if (msg.code === 'EVRFX_VHDL_SYNTAX_ERROR') {
+            return `✍❌ ${msg.text}`;
+        }
+
         if (msg.code === 'IQEXE_ERROR_COUNT') {
 
             if (msg.text.includes('successful')) {
                 return `✅ ${msg.text}\n`;
             }
 
-            return `❌ ${msg.text}`;
+            return `❗ ${msg.text}`;
         }
 
         // Generic formatting
