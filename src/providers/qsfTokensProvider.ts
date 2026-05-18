@@ -1,19 +1,25 @@
 import * as vscode from 'vscode';
 
-export const legend = new vscode.SemanticTokensLegend([
-  'keyword',
-  'parameter',
-  'string',
-  'comment'
-]);
 
-export class QsfTokensProvider implements vscode.DocumentSemanticTokensProvider 
+
+export class QTokensProvider implements vscode.DocumentSemanticTokensProvider 
 {
 
-  provideDocumentSemanticTokens(document: vscode.TextDocument) 
-  {
+  private static legend = new vscode.SemanticTokensLegend([
+    'keyword',
+    'parameter',
+    'string',
+    'comment'
+  ]);
 
-    const builder = new vscode.SemanticTokensBuilder(legend);
+  public static getLegend(): vscode.SemanticTokensLegend {
+      return QTokensProvider.legend;
+  }
+
+  provideDocumentSemanticTokens(document: vscode.TextDocument) 
+  { 
+
+    const builder = new vscode.SemanticTokensBuilder(QTokensProvider.legend);
 
     for (let i = 0; i < document.lineCount; i++) {
 

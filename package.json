@@ -48,6 +48,15 @@
           "QPF",
           "Quartus Project File"
         ]
+      },
+      {
+        "id": "questasim-do",
+        "extensions": [
+          ".do"
+        ],
+        "aliases": [
+          "QuestaSim DO"
+        ]
       }
     ],
     "configuration": {
@@ -97,7 +106,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.17",
     "@types/vscode": "^1.118.0",
-    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.27.3",
     "eslint": "^9.39.3",

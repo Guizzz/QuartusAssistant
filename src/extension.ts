@@ -5,9 +5,10 @@ import { registerSetQuartusPathCommand } from './commands/setPath';
 
 import { setupMaterialIcons } from './ui/setIcon';
 import { createStatusBar, updateButtonsVisibility } from './ui/statusBar';
-import { legend, QsfTokensProvider } from './providers/qsfTokensProvider';
+import { QTokensProvider } from './providers/qsfTokensProvider';
 import { registerQsfLint } from './lint/qsfLint';
 import { QsfProvider } from './providers/qsfTabProvider';
+import { DoTokenProvider } from './providers/doTokenProvider';
 
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -23,20 +24,28 @@ export async function activate(context: vscode.ExtensionContext) {
     const qsfFormatter =
         vscode.languages.registerDocumentSemanticTokensProvider(
             { language: 'qsf' },
-            new QsfTokensProvider(),
-            legend
+            new QTokensProvider(),
+            QTokensProvider.getLegend()
         );
 
     const qpfFormatter =
         vscode.languages.registerDocumentSemanticTokensProvider(
             { language: 'qpf' },
-            new QsfTokensProvider(),
-            legend
+            new QTokensProvider(),
+            QTokensProvider.getLegend()
+        );
+    
+    const doFormatter =
+        vscode.languages.registerDocumentSemanticTokensProvider(
+            { language: 'questasim-do' },
+            new DoTokenProvider(),
+            DoTokenProvider.getLegend()
         );
 
     context.subscriptions.push(
         qsfFormatter,
-        qpfFormatter
+        qpfFormatter,
+        doFormatter
     );
 
     updateButtonsVisibility();
