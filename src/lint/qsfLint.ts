@@ -23,7 +23,7 @@ export function registerQsfLint(context: vscode.ExtensionContext)
                             i,
                             line.length
                         ),
-                        'Spazi multipli',
+                        'Multiple spaces',
                         vscode.DiagnosticSeverity.Warning
                     )
                 );

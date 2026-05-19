@@ -7,36 +7,22 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
 
     async function validate(document: vscode.TextDocument)
     {
-        if (!document.fileName.endsWith('.vhd')) {
-            return;
-        }
+        if (!document.fileName.endsWith('.vhd')) { return; }
 
         const text = document.getText();
-
-        // Cerca entity
         const entityMatch = text.match(/entity\s+(\w+)\s+is/i);
 
-        if (!entityMatch) {
-            return;
-        }
+        if (!entityMatch) { return; }
 
         const entityName = entityMatch[1];
-
-        // Cerca file qsf
         const qsfFiles = await vscode.workspace.findFiles('**/*.qsf');
 
-        if (qsfFiles.length === 0) {
-            return;
-        }
+        if (qsfFiles.length === 0) {return;}
 
-        // Usa il primo qsf trovato
         const qsf = await parseQsf(qsfFiles[0]);
 
-        // Valida solo il top-level
-        if (
-            !qsf.topLevel ||
-            qsf.topLevel.toLowerCase() !== entityName.toLowerCase()
-        ) {
+        if ( !qsf.topLevel || qsf.topLevel.toLowerCase() !== entityName.toLowerCase() )
+        {
             diagnostics.delete(document.uri);
             return;
         }
@@ -44,15 +30,14 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
         const diags: vscode.Diagnostic[] = [];
         const portBlockMatch = text.match(/port\s*\(([\s\S]*?)\)\s*;/im);
 
-        if (!portBlockMatch) {
+        if (!portBlockMatch) 
+        {
             diagnostics.set(document.uri, diags);
             return;
         }
 
         const portBlock = portBlockMatch[1];
-
         const portRegex = /(\w+(?:\s*,\s*\w+)*)\s*:\s*(in|out|inout)/gi;
-
         let match;
 
         while ((match = portRegex.exec(portBlock)) !== null)
@@ -72,18 +57,14 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
 
                 if (!assigned)
                 {
-                    // posizione reale nel documento
-                    const absoluteIndex =
-                        text.indexOf(match[0]);
-
+                    const absoluteIndex = text.indexOf(match[0]);
                     const start = document.positionAt(absoluteIndex);
-
                     const end = start.translate(0, name.length);
 
                     diags.push(
                         new vscode.Diagnostic(
                             new vscode.Range(start, end),
-                            `Nessuna assegnazione pin QSF per '${name}'`,
+                            `No PIN assignment for '${name}'`,
                             vscode.DiagnosticSeverity.Warning
                         )
                     );

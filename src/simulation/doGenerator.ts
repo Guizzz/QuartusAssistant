@@ -1,0 +1,38 @@
+export function generateDoFile(
+    entity: string,
+    vhdlFiles: string[],
+    runtimeNs: number
+): string {
+
+    const lines: string[] = [];
+
+    lines.push('transcript on');
+    lines.push('');
+
+    lines.push('if {[file exists work]} {');
+    lines.push('    vdel -all');
+    lines.push('}');
+    lines.push('');
+
+    lines.push('vlib work');
+    lines.push('');
+
+    for (const file of vhdlFiles) {
+        lines.push(`vcom ${file}`);
+    }
+
+    lines.push('');
+
+    lines.push(`vsim work.${entity}`);
+    lines.push('');
+
+    lines.push('add wave -r *');
+    lines.push('');
+
+    lines.push(`run ${runtimeNs} ns`);
+    lines.push('');
+
+    lines.push('wave zoom full');
+
+    return lines.join('\n');
+}

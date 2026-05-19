@@ -26,6 +26,10 @@
       {
         "command": "quartus-assistant.flash",
         "title": "Quartus: Flash"
+      },
+      {
+        "command": "quartus.generateDoFile",
+        "title": "Quartus: Generate QuestaSim DO"
       }
     ],
     "languages": [
