@@ -9,6 +9,7 @@ import { QTokensProvider } from './providers/qsfTokensProvider';
 import { registerQsfLint } from './lint/qsfLint';
 import { QsfProvider } from './providers/qsfTabProvider';
 import { DoTokenProvider } from './providers/doTokenProvider';
+import { registerTopLevelPortLint } from './lint/portLint';
 
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -20,6 +21,7 @@ export async function activate(context: vscode.ExtensionContext) {
     registerSetQuartusPathCommand(context);
 
     registerQsfLint(context);
+    registerTopLevelPortLint(context);
 
     const qsfFormatter =
         vscode.languages.registerDocumentSemanticTokensProvider(
@@ -58,13 +60,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const tabView = new QsfProvider();
     await tabView.loadData();
+
     vscode.window.registerTreeDataProvider('quartus-assistant-view', tabView);
     vscode.workspace.onDidSaveTextDocument(async (doc) => {
-
         if (doc.fileName.endsWith('.qsf')) {
             await tabView.loadData();
         }
-
     });
 }
 
