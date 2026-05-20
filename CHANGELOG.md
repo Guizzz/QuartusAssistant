@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.2] - 2026-05-19
+
+### Feature
+
+- Implemented new parser for top level entity ports
+- Implemented lint warning on top level entity port that are missing on .qsf
+- Implemented syntax highlighting for questasim .do files
+
+
 ## [0.3.1] - 2026-05-18
 
 ### Improved
