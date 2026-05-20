@@ -1,9 +1,7 @@
-export function generateDoFile(
-    entity: string,
-    vhdlFiles: string[],
-    runtimeNs: number
-): string {
+import { SimulationUnit } from "./simulationScanner";
 
+export function generateDoFile(unit: SimulationUnit, vhdlFiles: string[], runtimeNs: number): string 
+{
     const lines: string[] = [];
 
     lines.push('transcript on');
@@ -21,9 +19,11 @@ export function generateDoFile(
         lines.push(`vcom ${file}`);
     }
 
+    lines.push(`vcom ${unit.file}`);
+
     lines.push('');
 
-    lines.push(`vsim work.${entity}`);
+    lines.push(`vsim -voptargs=+acc work.${unit.entity}`);
     lines.push('');
 
     lines.push('add wave -r *');

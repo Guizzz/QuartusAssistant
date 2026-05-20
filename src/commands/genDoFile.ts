@@ -1,28 +1,25 @@
 import * as vscode from 'vscode';
 
-import {scanSimulationUnits} from './simulationScanner';
-import { generateDoFile } from './doGenerator';
+import {scanSimulationUnits} from '../simulation/simulationScanner';
+import { generateDoFile } from '../simulation/doGenerator';
 import { parseQsf } from '../lint/qsfParser';
 
 export function registerSimulationUnit(context: vscode.ExtensionContext) 
 {
     const command = vscode.commands.registerCommand(
-            'quartus.generateDoFile',
+            'quartus-assistant.generateDo',
             async () => {
 
                 const workspace = vscode.workspace.workspaceFolders?.[0];
 
                 if (!workspace) {
-
                     vscode.window.showErrorMessage( 'No workspace opened' );
-
                     return;
                 }
 
                 const qsfFiles = await vscode.workspace.findFiles( '**/*.qsf' );
 
                 if (qsfFiles.length === 0) {
-
                     vscode.window.showErrorMessage( 'No QSF file found' );
                     return;
                 }
@@ -34,14 +31,7 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                 // -----------------------------
 
                 const vhdlFiles = await vscode.workspace.findFiles( '**/*.vhd' );
-
-                const fileNames =
-                    vhdlFiles.map(
-                        file =>
-                            file.path
-                                .split('/')
-                                .pop() || ''
-                    );
+                const allFileNames = vhdlFiles.map(file => vscode.workspace.asRelativePath(file));
 
                 // -----------------------------
                 // SIMULATION UNITS
@@ -50,9 +40,7 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                 const units = await scanSimulationUnits( workspace.uri );
 
                 if (units.length === 0) {
-
                     vscode.window.showErrorMessage( 'No simulation unit found' );
-
                     return;
                 }
 
@@ -62,7 +50,6 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
 
                 const picked =
                     await vscode.window.showQuickPick(
-
                         units.map(unit => ({
                             label: unit.entity,
                             detail: unit.file,
@@ -75,7 +62,15 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                         }
                     );
 
-                if (!picked) { return; }
+                if (!picked) { 
+                    vscode.window.showErrorMessage( 'No file picked' );
+                    return; }
+                
+
+                const projectFiles =
+                    allFileNames.filter(
+                        file => !file.endsWith(picked.unit.file)
+                    );
 
                 // -----------------------------
                 // GENERATE
@@ -83,8 +78,8 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
 
                 const doContent =
                     generateDoFile(
-                        picked.unit.entity,
-                        fileNames,
+                        picked.unit,
+                        projectFiles,
                         picked.unit.runTimeNs
                     );
 

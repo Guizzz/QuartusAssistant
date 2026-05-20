@@ -7,15 +7,11 @@ export interface SimulationUnit {
     runTimeNs: number;
 }
 
-export async function scanSimulationUnits(
-    folder: vscode.Uri
-): Promise<SimulationUnit[]> {
-
+export async function scanSimulationUnits( folder: vscode.Uri ): Promise<SimulationUnit[]> 
+{
     const units: SimulationUnit[] = [];
 
-    const files = await vscode.workspace.findFiles(
-        new vscode.RelativePattern(folder, '**/*.vhd')
-    );
+    const files = await vscode.workspace.findFiles(new vscode.RelativePattern(folder, '**/*.vhd'));
 
     for (const file of files) {
 
@@ -103,7 +99,7 @@ export async function scanSimulationUnits(
 
         units.push({
             entity,
-            file: path.basename(file.fsPath),
+            file: vscode.workspace.asRelativePath(file),
             runTimeNs: totalNs
         });
     }

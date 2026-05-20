@@ -8,7 +8,8 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
             'string',
             'number',
             'comment',
-            'function'
+            'function',
+            'parameter'
         ],
         []
     );
@@ -23,6 +24,7 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
         'vcom',
         'vlog',
         'vsim',
+        'vdel',
         'run',
         'add',
         'wave',
@@ -34,7 +36,8 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
         'while',
         'foreach',
         'proc',
-        'set'
+        'set',
+        'transcript'
     ];
 
     async provideDocumentSemanticTokens(document: vscode.TextDocument): Promise<vscode.SemanticTokens> 
@@ -119,6 +122,21 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
                     procMatch.index,
                     procMatch[0].length,
                     4, // function
+                    0
+                );
+            }
+
+            // argomenti TCL/CLI
+            const argRegex = /-(\w+)(?:=[^\s]+)?/g;
+            let argMatch;
+
+            while ((argMatch = argRegex.exec(text)) !== null)
+            {
+                builder.push(
+                    line,
+                    argMatch.index + 1, // salta il "-"
+                    argMatch[1].length,
+                    5, // args
                     0
                 );
             }
