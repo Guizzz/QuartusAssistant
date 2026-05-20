@@ -1,22 +1,43 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 
-export interface SimulationUnit {
+export interface SimulationUnit
+{
     entity: string;
     file: string;
+    entityNeeded: string[];
     runTimeNs: number;
 }
 
-export async function scanSimulationUnits( folder: vscode.Uri ): Promise<SimulationUnit[]> 
+interface EntityInfo
+{
+    file: vscode.Uri;
+    text: string;
+}
+
+export async function scanSimulationUnits(
+    folder: vscode.Uri
+): Promise<SimulationUnit[]>
 {
     const units: SimulationUnit[] = [];
 
-    const files = await vscode.workspace.findFiles(new vscode.RelativePattern(folder, '**/*.vhd'));
+    const files =
+        await vscode.workspace.findFiles(
+            new vscode.RelativePattern(folder, '**/*.vhd')
+        );
 
-    for (const file of files) {
+    // =========================================
+    // ENTITY DATABASE
+    // =========================================
 
-        const data = await vscode.workspace.fs.readFile(file);
-        const text = Buffer.from(data).toString('utf8');
+    const entityDb = new Map<string, EntityInfo>();
+
+    for (const file of files)
+    {
+        const data =
+            await vscode.workspace.fs.readFile(file);
+
+        const text =
+            Buffer.from(data).toString('utf8');
 
         const entityMatch =
             text.match(/entity\s+(\w+)\s+is/i);
@@ -25,7 +46,22 @@ export async function scanSimulationUnits( folder: vscode.Uri ): Promise<Simulat
             continue;
         }
 
-        const entity = entityMatch[1];
+        const entity =
+            entityMatch[1];
+
+        entityDb.set(entity, {
+            file,
+            text
+        });
+    }
+
+    // =========================================
+    // PROCESS SIMULATION UNITS
+    // =========================================
+
+    for (const [entity, info] of entityDb)
+    {
+        const text = info.text;
 
         // -----------------------------------------
         // HEURISTICS
@@ -40,28 +76,73 @@ export async function scanSimulationUnits( folder: vscode.Uri ): Promise<Simulat
         const hasAssert =
             /assert\s+/i.test(text);
 
-        const hasEntityInstantiation =
-            /entity\s+work\./i.test(text);
-
         const hasSimulationArchitecture =
             /architecture\s+sim/i.test(text);
 
         const isSimulationCandidate =
-            (
-                !hasPorts ||
-                hasWaitFor ||
-                hasAssert ||
-                hasEntityInstantiation ||
-                hasSimulationArchitecture
-            );
+        (
+            !hasPorts ||
+            hasWaitFor ||
+            hasAssert ||
+            hasSimulationArchitecture
+        );
 
         if (!isSimulationCandidate) {
             continue;
         }
 
-        // -----------------------------------------
+        // =========================================
+        // RECURSIVE DEPENDENCIES
+        // =========================================
+
+        const visited = new Set<string>();
+
+        function resolveDependencies(
+            currentEntity: string
+        )
+        {
+            const current =
+                entityDb.get(currentEntity);
+
+            if (!current) {
+                return;
+            }
+
+            const currentPath =
+                vscode.workspace.asRelativePath(current.file);
+
+            if (visited.has(currentPath)) {
+                return;
+            }
+
+            visited.add(currentPath);
+
+            const regex =
+                /entity\s+work\.(\w+)/gi;
+
+            const matches =
+                current.text.matchAll(regex);
+
+            for (const match of matches)
+            {
+                const dep =
+                    match[1];
+
+                if (dep !== entity)
+                {
+                    resolveDependencies(dep);
+                }
+            }
+        }
+
+        resolveDependencies(entity);
+
+        // rimuovi la root entity
+        visited.delete(entity);
+
+        // =========================================
         // RUNTIME ESTIMATION
-        // -----------------------------------------
+        // =========================================
 
         const waitRegex =
             /wait\s+for\s+(\d+)\s*(ns|us|ms)/gi;
@@ -70,13 +151,16 @@ export async function scanSimulationUnits( folder: vscode.Uri ): Promise<Simulat
 
         let match: RegExpExecArray | null;
 
-        while ((match = waitRegex.exec(text)) !== null) {
+        while ((match = waitRegex.exec(text)) !== null)
+        {
+            const value =
+                parseInt(match[1]);
 
-            const value = parseInt(match[1]);
-            const unit = match[2].toLowerCase();
+            const unit =
+                match[2].toLowerCase();
 
-            switch (unit) {
-
+            switch (unit)
+            {
                 case 'ns':
                     totalNs += value;
                     break;
@@ -99,7 +183,8 @@ export async function scanSimulationUnits( folder: vscode.Uri ): Promise<Simulat
 
         units.push({
             entity,
-            file: vscode.workspace.asRelativePath(file),
+            file: vscode.workspace.asRelativePath(info.file),
+            entityNeeded: [...visited],
             runTimeNs: totalNs
         });
     }

@@ -27,13 +27,6 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                 await parseQsf(qsfFiles[0]);
 
                 // -----------------------------
-                // VHDL FILES
-                // -----------------------------
-
-                const vhdlFiles = await vscode.workspace.findFiles( '**/*.vhd' );
-                const allFileNames = vhdlFiles.map(file => vscode.workspace.asRelativePath(file));
-
-                // -----------------------------
                 // SIMULATION UNITS
                 // -----------------------------
 
@@ -65,12 +58,6 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                 if (!picked) { 
                     vscode.window.showErrorMessage( 'No file picked' );
                     return; }
-                
-
-                const projectFiles =
-                    allFileNames.filter(
-                        file => !file.endsWith(picked.unit.file)
-                    );
 
                 // -----------------------------
                 // GENERATE
@@ -79,14 +66,15 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                 const doContent =
                     generateDoFile(
                         picked.unit,
-                        projectFiles,
+                        picked.unit.entityNeeded,
                         picked.unit.runTimeNs
                     );
 
                 const doFile =
                     vscode.Uri.joinPath(
                         workspace.uri,
-                        'questasim.do'
+                        'simulation',
+                        picked.unit.entity +'.do'
                     );
 
                 await vscode.workspace.fs.writeFile(
