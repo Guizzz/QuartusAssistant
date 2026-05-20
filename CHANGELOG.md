@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.4.1] - 2026-05-20
+ 
+### Fixed
+- Fix order of dependencies auto imported on .do file
 
 ## [0.4.0] - 2026-05-20
 
