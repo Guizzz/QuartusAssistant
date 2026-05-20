@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-05-20
+
+### Feature
+- New command implemented: "Generate QuestaSim .do" file
+- Auto search into project if there are testbench files
+- Auto search for dependencies of the test bench
+- Auto-Generation of .do file ready to be executed on questasim
+
+
 ## [0.3.2] - 2026-05-19
 
 ### Feature
