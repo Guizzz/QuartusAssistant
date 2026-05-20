@@ -57,12 +57,13 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
 
                 if (!picked) { 
                     vscode.window.showErrorMessage( 'No file picked' );
-                    return; }
+                    return; 
+                }
 
                 // -----------------------------
                 // GENERATE
                 // -----------------------------
-
+                
                 const doContent =
                     generateDoFile(
                         picked.unit,
@@ -82,9 +83,7 @@ export function registerSimulationUnit(context: vscode.ExtensionContext)
                     Buffer.from(doContent)
                 );
 
-                vscode.window.showInformationMessage(
-                    'questasim.do generated'
-                );
+                vscode.window.showInformationMessage( 'questasim.do generated' );
             }
         );
 

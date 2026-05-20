@@ -14,9 +14,7 @@ interface EntityInfo
     text: string;
 }
 
-export async function scanSimulationUnits(
-    folder: vscode.Uri
-): Promise<SimulationUnit[]>
+export async function scanSimulationUnits( folder: vscode.Uri ): Promise<SimulationUnit[]>
 {
     const units: SimulationUnit[] = [];
 
@@ -33,26 +31,15 @@ export async function scanSimulationUnits(
 
     for (const file of files)
     {
-        const data =
-            await vscode.workspace.fs.readFile(file);
+        const data = await vscode.workspace.fs.readFile(file);
+        const text = Buffer.from(data).toString('utf8');
+        const entityMatch = text.match(/entity\s+(\w+)\s+is/i);
 
-        const text =
-            Buffer.from(data).toString('utf8');
+        if (!entityMatch) { continue; }
 
-        const entityMatch =
-            text.match(/entity\s+(\w+)\s+is/i);
+        const entity = entityMatch[1];
 
-        if (!entityMatch) {
-            continue;
-        }
-
-        const entity =
-            entityMatch[1];
-
-        entityDb.set(entity, {
-            file,
-            text
-        });
+        entityDb.set(entity, { file, text });
     }
 
     // =========================================
@@ -62,22 +49,16 @@ export async function scanSimulationUnits(
     for (const [entity, info] of entityDb)
     {
         const text = info.text;
+        const tb_file = vscode.workspace.asRelativePath(info.file);
 
         // -----------------------------------------
         // HEURISTICS
         // -----------------------------------------
 
-        const hasPorts =
-            /port\s*\(/i.test(text);
-
-        const hasWaitFor =
-            /wait\s+for/i.test(text);
-
-        const hasAssert =
-            /assert\s+/i.test(text);
-
-        const hasSimulationArchitecture =
-            /architecture\s+sim/i.test(text);
+        const hasPorts = /port\s*\(/i.test(text);
+        const hasWaitFor = /wait\s+for/i.test(text);
+        const hasAssert = /assert\s+/i.test(text);
+        const hasSimulationArchitecture = /architecture\s+sim/i.test(text);
 
         const isSimulationCandidate =
         (
@@ -87,65 +68,58 @@ export async function scanSimulationUnits(
             hasSimulationArchitecture
         );
 
-        if (!isSimulationCandidate) {
-            continue;
-        }
+        if (!isSimulationCandidate) {continue;}
 
         // =========================================
         // RECURSIVE DEPENDENCIES
         // =========================================
 
         const visited = new Set<string>();
+        const ordered: string[] = [];
 
-        function resolveDependencies(
-            currentEntity: string
-        )
+        function resolveDependencies(currentEntity: string)
         {
-            const current =
-                entityDb.get(currentEntity);
+            const current = entityDb.get(currentEntity);
 
-            if (!current) {
-                return;
-            }
+            if (!current) { return; }
 
             const currentPath =
                 vscode.workspace.asRelativePath(current.file);
 
-            if (visited.has(currentPath)) {
-                return;
-            }
+            if (visited.has(currentPath)) { return; }
 
             visited.add(currentPath);
 
-            const regex =
-                /entity\s+work\.(\w+)/gi;
+            const regex = /entity\s+work\.(\w+)/gi;
 
-            const matches =
-                current.text.matchAll(regex);
+            const matches = current.text.matchAll(regex);
 
+            // prima dipendenze
             for (const match of matches)
             {
-                const dep =
-                    match[1];
+                const dep = match[1];
 
-                if (dep !== entity)
+                if (dep !== currentEntity)
                 {
                     resolveDependencies(dep);
                 }
             }
+
+            // poi il file corrente
+            ordered.push(currentPath);
         }
 
         resolveDependencies(entity);
 
+        
         // rimuovi la root entity
-        visited.delete(entity);
+        ordered.pop();
 
         // =========================================
         // RUNTIME ESTIMATION
         // =========================================
 
-        const waitRegex =
-            /wait\s+for\s+(\d+)\s*(ns|us|ms)/gi;
+        const waitRegex = /wait\s+for\s+(\d+)\s*(ns|us|ms)/gi;
 
         let totalNs = 0;
 
@@ -183,8 +157,8 @@ export async function scanSimulationUnits(
 
         units.push({
             entity,
-            file: vscode.workspace.asRelativePath(info.file),
-            entityNeeded: [...visited],
+            file: tb_file,
+            entityNeeded: ordered,
             runTimeNs: totalNs
         });
     }

@@ -15,15 +15,20 @@ export function generateDoFile(unit: SimulationUnit, vhdlFiles: string[], runtim
     lines.push('vlib work');
     lines.push('');
 
+    
     for (const file of vhdlFiles) {
         lines.push(`vcom ${file}`);
     }
-
+    
     lines.push(`vcom ${unit.file}`);
-
     lines.push('');
+    
+    lines.push('file mkdir simulation/waves');
+    lines.push('');
+    
+    const wlfName = `${unit.entity}.wlf`;
 
-    lines.push(`vsim -voptargs=+acc work.${unit.entity}`);
+    lines.push(`vsim -voptargs=+acc -wlf simulation/waves/${wlfName} work.${unit.entity}`);
     lines.push('');
 
     lines.push('add wave -r *');
