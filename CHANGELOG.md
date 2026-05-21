@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.4.2] - 2026-05-21
+
+### Improved
+- When generting .do now add only testbench waves
+
 ## [0.4.1] - 2026-05-20
  
 ### Fixed
