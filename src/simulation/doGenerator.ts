@@ -31,8 +31,10 @@ export function generateDoFile(unit: SimulationUnit, vhdlFiles: string[], runtim
     lines.push(`vsim -voptargs=+acc -wlf simulation/waves/${wlfName} work.${unit.entity}`);
     lines.push('');
 
-    lines.push('add wave -r *');
-    lines.push('');
+    for (const signal of unit.signals)
+    {
+        lines.push(`add wave sim:/${unit.entity}/${signal}`);
+    }
 
     lines.push(`run ${runtimeNs} ns`);
     lines.push('');

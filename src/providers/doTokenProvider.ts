@@ -33,6 +33,7 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
         'quit',
         'do',
         'if',
+        'file',
         'while',
         'foreach',
         'proc',
