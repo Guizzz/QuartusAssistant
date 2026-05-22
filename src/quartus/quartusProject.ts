@@ -10,6 +10,10 @@ export async function getProjectFile()
 export async function getSettingsFile() 
 {
     const files = await vscode.workspace.findFiles('**/*.qsf');
+    if (files.length === 0) {
+        vscode.window.showErrorMessage( 'No Quartus Setting file found' );
+        return undefined;
+    };
     return files[0];
 }
 
@@ -39,6 +43,18 @@ export async function getProjectDir(): Promise<string | null> {
     }
 
     return path.dirname(file.fsPath);
+}
+
+export function getWorkspace()
+{
+    const workspace = vscode.workspace.workspaceFolders?.[0];
+        
+    if (!workspace) {
+        vscode.window.showErrorMessage( 'No workspace opened' );
+        return undefined;
+    }
+
+    return workspace.uri;
 }
 
 export async function hasQuartusProject(): Promise<boolean> 

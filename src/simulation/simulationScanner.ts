@@ -5,6 +5,7 @@ export interface SimulationUnit
     entity: string;
     signals: string[];
     file: string;
+    uriFile: vscode.Uri;
     entityNeeded: string[];
     runTimeNs: number;
 }
@@ -175,6 +176,7 @@ export async function scanSimulationUnits( folder: vscode.Uri ): Promise<Simulat
             entity,
             signals: getPorts(text),
             file: tb_file,
+            uriFile: info.file,
             entityNeeded: ordered,
             runTimeNs: totalNs
         });

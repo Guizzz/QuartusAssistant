@@ -29,6 +29,13 @@ export interface QuartusTaskOptions
     failMessage: (project: string) => string;
 }
 
+export interface QuestaSimOption
+{
+    doFile: string
+    projectName: string
+    label: string
+}
+
 export async function runQuartusTask(options: QuartusTaskOptions) 
 {
     const [projectName, projectDir] = await Promise.all([
@@ -86,6 +93,46 @@ export async function runQuartusTask(options: QuartusTaskOptions)
         } else {
             buildStatus.text = `$(error) ${options.statusFail}`;
             vscode.window.showErrorMessage(options.failMessage(projectName));
+        }
+    });
+}
+
+export async function runSimulation(options: QuestaSimOption) {
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+
+    if (!workspaceRoot) {
+        vscode.window.showErrorMessage("No workspace open");
+        return;
+    }
+
+    buildStatus.text = `$(sync~spin) Starting Simulation...`;
+
+    const proc = spawn(
+        "vsim",
+        ["-gui", "-do", options.doFile],
+        {
+            cwd: workspaceRoot,
+            detached: true,
+            stdio: "ignore"
+        }
+    );
+
+    proc.unref();
+
+    proc.on("spawn", () => {
+        logger.appendLine("🧪 Simulation started 🔬");
+    });
+
+    proc.on('close', code => {
+
+        const success = code === 0;
+
+        if (success) {
+            buildStatus.text = `$(check) Simulation complete`;
+            vscode.window.showInformationMessage(`${options.projectName}: Simulation complete for ${options.label}`);
+        } else {
+            buildStatus.text = `$(error) Simulation Error`;
+            vscode.window.showErrorMessage(`${options.projectName}: Simulation fail for ${options.label}`);
         }
     });
 }

@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-import { getProjectName, getQuestaFile } from '../quartus/quartusProject';
+import { getProjectName, getQuestaFile, getWorkspace } from '../quartus/quartusProject';
 import path from 'path';
-import { spawn } from 'child_process';
 import { QuartusLogger, quartusOutput } from '../quartus/quartusLogger';
-import { buildStatus } from '../ui/statusBar';
+import { QuestaSimOption, runSimulation } from '../quartus/quartusRunner';
 
 const logger = new QuartusLogger(quartusOutput);
 
@@ -11,15 +10,12 @@ export function registerRunSimulationUnit(context: vscode.ExtensionContext)
 {
     const command = vscode.commands.registerCommand(
                 'quartus-assistant.runDo',
-                async () => {
-                    const workspace = vscode.workspace.workspaceFolders?.[0];
-                    
-                    if (!workspace) {
-                        vscode.window.showErrorMessage( 'No workspace opened' );
-                        return;
-                    }
+                async (file?: string) => 
+                {
+                    const workspace = getWorkspace();
+                    if (!workspace) {return;}
 
-                    const workspaceRoot = workspace.uri.fsPath;
+                    const workspaceRoot = workspace.fsPath;
 
                     if (!workspaceRoot) {
                         vscode.window.showErrorMessage("No workspace open");
@@ -27,7 +23,19 @@ export function registerRunSimulationUnit(context: vscode.ExtensionContext)
                     }
 
                     const projectName = await getProjectName();
-    
+                    
+
+                    if (file) {
+                        quartusOutput.show(true);
+                        const opt: QuestaSimOption = {
+                            doFile: file,
+                            label: file,
+                            projectName: projectName!
+                        };
+                        await runSimulation(opt);
+                        return;
+                    }
+
                     const qsfFiles = await getQuestaFile();
     
                     if (qsfFiles.length === 0) {
@@ -58,34 +66,13 @@ export function registerRunSimulationUnit(context: vscode.ExtensionContext)
                     console.log("cwd:", workspaceRoot);
                     console.log("file:", picked.unit.fsPath);
 
-                    const proc = spawn(
-                        "vsim",
-                        ["-gui", "-do", picked.detail],
-                        {
-                            cwd: workspaceRoot,
-                            detached: true,
-                            stdio: "ignore"
-                        }
-                    );
+                    const opt: QuestaSimOption = {
+                        doFile: picked.detail,
+                        label: picked.label,
+                        projectName: projectName!
+                    };
 
-                    proc.unref();
-
-                    proc.on("spawn", () => {
-                        logger.appendLine("Simulation started");
-                    });
-                
-                    proc.on('close', code => {
-                
-                        const success = code === 0;
-                
-                        if (success) {
-                            buildStatus.text = `$(check) Simulation complete`;
-                            vscode.window.showInformationMessage(`${projectName}: Simulation complete for ${picked.label}`);
-                        } else {
-                            buildStatus.text = `$(error) Simulation Error`;
-                            vscode.window.showErrorMessage(`${projectName}: Simulation fail for ${picked.label}`);
-                        }
-                    });
+                    runSimulation(opt);
 
                 });
     context.subscriptions.push(command);

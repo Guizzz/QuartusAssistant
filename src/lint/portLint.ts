@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { parseQsf } from './qsfParser';
+import { getSettingsFile } from '../quartus/quartusProject';
 
 export function registerTopLevelPortLint(context: vscode.ExtensionContext)
 {
@@ -15,11 +16,11 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
         if (!entityMatch) { return; }
 
         const entityName = entityMatch[1];
-        const qsfFiles = await vscode.workspace.findFiles('**/*.qsf');
+        const qsfFile = await getSettingsFile();
 
-        if (qsfFiles.length === 0) {return;}
+        if (!qsfFile) {return;}
 
-        const qsf = await parseQsf(qsfFiles[0]);
+        const qsf = await parseQsf(qsfFile);
 
         if ( !qsf.topLevel || qsf.topLevel.entity.toLowerCase() !== entityName.toLowerCase() )
         {

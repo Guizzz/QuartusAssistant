@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { getQuestaFile, getSettingsFile } from '../quartus/quartusProject';
+import { getQuestaFile, getSettingsFile, getWorkspace } from '../quartus/quartusProject';
 import { parseQsf, ProjectInfo } from '../lint/qsfParser';
 import path from 'path';
+import { scanSimulationUnits } from '../simulation/simulationScanner';
 export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
     private _onDidChangeTreeData = new vscode.EventEmitter<void>();
@@ -9,6 +10,7 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
     private qsfData: ProjectInfo | undefined;
     private questaFiles : vscode.Uri[] = [];
+    private testBenchFiles : vscode.Uri[] = [];
     private loading = false;
 
     async loadData() 
@@ -16,9 +18,14 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
         if (this.loading) {return;}
         this.loading = true;
 
+        const workspace = getWorkspace();
+        if (!workspace) {return;}
+
         try 
         {   
             this.questaFiles = await getQuestaFile();
+            this.testBenchFiles = (await scanSimulationUnits(workspace)).map(i => i.uriFile);
+
             const file = await getSettingsFile();
 
             if (!file) {
@@ -95,16 +102,21 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                 "Questasim scripts",
                 vscode.TreeItemCollapsibleState.Expanded
             );
-            questaSimScripts.iconPath = new vscode.ThemeIcon("beaker");
-            
+            questaSimScripts.iconPath = new vscode.ThemeIcon("pulse");
             items.push(questaSimScripts);
+
+            const testBenches = new vscode.TreeItem(
+                "Testbenches Files",
+                vscode.TreeItemCollapsibleState.Expanded
+            );
+            questaSimScripts.iconPath = new vscode.ThemeIcon("beaker");
+            items.push(testBenches);
             
             const pinHeader = new vscode.TreeItem(
                 "PIN ASSIGNMENTS",
                 vscode.TreeItemCollapsibleState.Expanded
             );
             pinHeader.iconPath = new vscode.ThemeIcon("pin");
-
             items.push(pinHeader);
 
             return items;
@@ -115,6 +127,19 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
             return this.qsfData.pins.map((p: any) => {
                 const item = new vscode.TreeItem(p.signal);
                 item.description = p.pin;
+                return item;
+            });
+        }
+
+        if (element.label === "Testbenches Files") 
+        {
+            return this.testBenchFiles.map((uri: vscode.Uri) => {
+                const relativePath = vscode.workspace.asRelativePath(uri);
+                const item = new vscode.TreeItem(
+                    relativePath,
+                    vscode.TreeItemCollapsibleState.None
+                );
+                item.resourceUri = uri;
                 return item;
             });
         }
@@ -133,9 +158,9 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                 item.resourceUri = uri;
 
                 item.command = {
-                    command: "vscode.open",
-                    title: "Open File",
-                    arguments: [uri]
+                    command: "quartus-assistant.runDo",
+                    title: "Run Simulation",
+                    arguments: [relativePath]
                 };
 
                 return item;

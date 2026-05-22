@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import {scanSimulationUnits} from '../simulation/simulationScanner';
 import { generateDoFile } from '../simulation/doGenerator';
 import { parseQsf } from '../lint/qsfParser';
+import { getWorkspace } from '../quartus/quartusProject';
 
 export function registerGenSimulationUnit(context: vscode.ExtensionContext) 
 {
@@ -10,27 +11,14 @@ export function registerGenSimulationUnit(context: vscode.ExtensionContext)
             'quartus-assistant.generateDo',
             async () => {
 
-                const workspace = vscode.workspace.workspaceFolders?.[0];
-
-                if (!workspace) {
-                    vscode.window.showErrorMessage( 'No workspace opened' );
-                    return;
-                }
-
-                const qsfFiles = await vscode.workspace.findFiles( '**/*.qsf' );
-
-                if (qsfFiles.length === 0) {
-                    vscode.window.showErrorMessage( 'No QSF file found' );
-                    return;
-                }
-
-                await parseQsf(qsfFiles[0]);
+                const workspace = getWorkspace();
+                if (!workspace) {return;}
 
                 // -----------------------------
                 // SIMULATION UNITS
                 // -----------------------------
 
-                const units = await scanSimulationUnits( workspace.uri );
+                const units = await scanSimulationUnits( workspace );
 
                 if (units.length === 0) {
                     vscode.window.showErrorMessage( 'No simulation unit found' );
@@ -73,7 +61,7 @@ export function registerGenSimulationUnit(context: vscode.ExtensionContext)
 
                 const doFile =
                     vscode.Uri.joinPath(
-                        workspace.uri,
+                        workspace,
                         'simulation',
                         picked.unit.entity +'.do'
                     );
