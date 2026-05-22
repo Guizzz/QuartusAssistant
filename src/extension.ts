@@ -10,7 +10,8 @@ import { registerQsfLint } from './lint/qsfLint';
 import { QsfProvider } from './providers/qsfTabProvider';
 import { DoTokenProvider } from './providers/doTokenProvider';
 import { registerTopLevelPortLint } from './lint/portLint';
-import { registerSimulationUnit } from './commands/genDoFile';
+import { registerGenSimulationUnit } from './commands/genDoFile';
+import { registerRunSimulationUnit } from './commands/runDoFile';
 
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -20,7 +21,8 @@ export async function activate(context: vscode.ExtensionContext) {
     registerBuildCommand(context);
     registerFlashCommand(context);
     registerSetQuartusPathCommand(context);
-    registerSimulationUnit(context);
+    registerGenSimulationUnit(context);
+    registerRunSimulationUnit(context);
 
     registerQsfLint(context);
     registerTopLevelPortLint(context);

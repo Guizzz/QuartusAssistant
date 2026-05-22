@@ -26,6 +26,11 @@ export class QuartusLogger {
 
     constructor(private output: vscode.OutputChannel) {}
 
+    appendLine(line: string)
+    {
+        this.output.appendLine(line);
+    }
+
     startBuild(project: string) 
     {
         this.output.clear();

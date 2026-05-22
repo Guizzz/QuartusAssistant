@@ -30,6 +30,10 @@
       {
         "command": "quartus-assistant.generateDo",
         "title": "Quartus: Generate QuestaSim DO"
+      },
+      {
+        "command": "quartus-assistant.runDo",
+        "title": "Quartus: Run QuestaSim simulation"
       }
     ],
     "languages": [

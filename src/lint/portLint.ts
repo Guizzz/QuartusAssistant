@@ -21,7 +21,7 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
 
         const qsf = await parseQsf(qsfFiles[0]);
 
-        if ( !qsf.topLevel || qsf.topLevel.toLowerCase() !== entityName.toLowerCase() )
+        if ( !qsf.topLevel || qsf.topLevel.entity.toLowerCase() !== entityName.toLowerCase() )
         {
             diagnostics.delete(document.uri);
             return;

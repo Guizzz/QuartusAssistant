@@ -4,9 +4,6 @@ export function generateDoFile(unit: SimulationUnit, vhdlFiles: string[], runtim
 {
     const lines: string[] = [];
 
-    lines.push('transcript on');
-    lines.push('');
-
     lines.push('if {[file exists work]} {');
     lines.push('    vdel -all');
     lines.push('}');
@@ -36,6 +33,7 @@ export function generateDoFile(unit: SimulationUnit, vhdlFiles: string[], runtim
         lines.push(`add wave sim:/${unit.entity}/${signal}`);
     }
 
+    lines.push('');
     lines.push(`run ${runtimeNs} ns`);
     lines.push('');
 

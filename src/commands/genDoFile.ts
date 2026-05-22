@@ -4,7 +4,7 @@ import {scanSimulationUnits} from '../simulation/simulationScanner';
 import { generateDoFile } from '../simulation/doGenerator';
 import { parseQsf } from '../lint/qsfParser';
 
-export function registerSimulationUnit(context: vscode.ExtensionContext) 
+export function registerGenSimulationUnit(context: vscode.ExtensionContext) 
 {
     const command = vscode.commands.registerCommand(
             'quartus-assistant.generateDo',
