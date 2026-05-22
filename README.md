@@ -1,45 +1,56 @@
-# QuartusAssistant
+# Quartus Assistant
 
-VS Code extension that integrates the Intel Quartus workflow directly into the editor, making FPGA/CPLD development faster and more convenient.
+A modern Visual Studio Code extension that brings Intel Quartus and QuestaSim workflows directly into VS Code.
 
-The extension provides project management utilities, compile/flash automation, syntax highlighting for Quartus project files, and project information extracted directly from `.qsf` files.
+Designed for FPGA developers who are tired of switching between terminals, Quartus GUI windows, and simulation tools just to compile or run a testbench.
 
 ---
 
 ## ✨ Features
 
-* ⚡ Compile Quartus projects directly from VS Code
-* 🚀 Flash FPGA/CPLD devices from inside the editor
-* 📁 Support for `.qpf` and `.qsf` project files
-* 🎨 Syntax highlighting for Quartus project files
-* 🧩 Dedicated sidebar panel for Quartus project inspection
-* 🔍 Automatic `.qsf` parsing to extract:
+### 🧠 Quartus Project Awareness
 
-  * FPGA family
-  * Target device
-  * Top-level entity
-  * Output directory
-  * Pin assignments
-* 📌 Expandable pin configuration view
-* 🔧 Streamlined workflow integration for Quartus-based development
+* Automatic Quartus project detection
+* QSF parsing and project information extraction
+* Top-level entity detection
+* Pin assignment parsing
+* Workspace-aware project handling
 
+### ▶ QuestaSim Integration
 
-## 🛠️ Requirements
+* Automatic `.do` script discovery
+* QuickPick-based simulation launcher
+* Direct QuestaSim GUI startup from VS Code
+* Workspace-relative simulation management
+* Detached GUI execution for smooth workflow integration
 
-* Intel Quartus Prime installed
-* VS Code 1.80 or later
-* ___(optional)___ Node.js (required only for development/building the extension)
+### 🌳 Dedicated Quartus Explorer
 
+* Clean TreeView integration inside VS Code
+* Workspace-relative file visualization
+* Organized simulation script navigation
+* Project-aware structure browsing
 
-## 🎨 Syntax Highlighting
+### ⚡ Developer Workflow Improvements
 
-Automatic support for:
+* Faster simulation startup
+* Reduced context switching
+* Integrated command-based architecture
+* Cross-platform path handling
+* Cleaner FPGA development experience inside VS Code
 
-* `.qpf` (Quartus Project Files)
-* `.qsf` (Quartus Settings Files)
+---
 
-Just open the file in VS Code.
+## 🚀 Current Capabilities
 
+* Run QuestaSim simulations directly from VS Code
+* Detect and manage Quartus projects
+* Parse `.qsf` project configuration files
+* Locate VHDL top-level entities automatically
+* Launch simulation scripts with a single click
+* Automatic workspace-root execution handling
+
+---
 
 ## 🧠 Motivation
 
@@ -51,40 +62,60 @@ This extension aims to:
 * speed up compile/flash cycles
 * integrate FPGA/CPLD workflows directly into VS Code
 
-## 🔨 Usage
+## ⚙️ Available Commands
 
-Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and use:
+Quartus Assistant integrates directly into the VS Code Command Palette and workflow.
 
-### Compile project
-To compile de project use:
+### Quartus Commands
 
+| Command                             | Description                                                     |
+| ----------------------------------- | --------------------------------------------------------------- |
+| `Quartus: Build`                    | Launches Quartus project compilation                            |
+| `Quartus: Flash`                    | Programs the FPGA device using Quartus tools                    |
+| `Quartus: Set Quartus Path`         | Configures the Quartus installation path                        |
+| `Quartus: Generate QuestaSim DO`    | Automatically generates QuestaSim `.do` scripts                 |
+| `Quartus: Run QuestaSim simulation` | Launches a selected simulation script directly in QuestaSim GUI |
+
+---
+
+## 🧩 Command Palette Integration
+
+All commands are accessible from:
+
+```txt
+Ctrl + Shift + P
 ```
+
+then search:
+
+```txt
+Quartus:
+```
+
+Example:
+
+```txt
 Quartus: Build
+Quartus: Generate QuestaSim DO
+Quartus: Run QuestaSim simulation
 ```
 
-### Flash CPLD
-After plug in your board, you can use this command to program your CPLD:
-```
-Quartus: Flash Device
-```
+---
 
-### Configure Quartus Path
-To make everythigs works, you must have Quartus installed, and use this path to configure his installation path:
-```
-Quartus: Set PATH
-```
---- 
-## 📥 Installation
+## 🚀 Typical Workflow
 
-### Option 1 — Install from release (.vsix)
+1. Open a Quartus project workspace
+2. Configure Quartus path
+3. Build the FPGA project
+4. Generate simulation `.do` files
+5. Launch QuestaSim simulations directly from VS Code
+6. Flash the FPGA device
 
-Download the latest `.vsix` file from the GitHub Releases page, then open Visual Studio Coode:
+All without leaving the editor. ✨
 
-> _Ctrl-Shift-X_ -> "Install from .vsix..."
+---
 
-
-
-### Option 2 — Build from source
+### 🔨 Build from source
 
 ```bash
 git clone https://github.com/Guizzz/QuartusAssistant.git
