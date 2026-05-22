@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { getQuestaFile, getSettingsFile, getWorkspace } from '../quartus/quartusProject';
 import { parseQsf, ProjectInfo } from '../lint/qsfParser';
-import path from 'path';
 import { scanSimulationUnits } from '../simulation/simulationScanner';
 export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
@@ -109,11 +108,11 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                 "Testbenches Files",
                 vscode.TreeItemCollapsibleState.Expanded
             );
-            questaSimScripts.iconPath = new vscode.ThemeIcon("beaker");
+            testBenches.iconPath = new vscode.ThemeIcon("beaker");
             items.push(testBenches);
             
             const pinHeader = new vscode.TreeItem(
-                "PIN ASSIGNMENTS",
+                "Pin Assignments",
                 vscode.TreeItemCollapsibleState.Expanded
             );
             pinHeader.iconPath = new vscode.ThemeIcon("pin");
