@@ -1,6 +1,27 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [0.5.0] - 2026-05-22
+
+### Feature
+
+- Added integrated QuestaSim `.do` launcher
+- Added QuickPick selection for simulation scripts
+- Added automatic QuestaSim GUI startup from VS Code
+- Added support for launching simulations directly from the Quartus Assistant view
+- Added automatic workspace-relative `.do` file discovery
+- Added top-level entity source file detection from VHDL entity declarations
+- Added project-aware simulation execution using workspace root as working directory
+
+### Improved
+
+- Improved TreeView display using workspace-relative paths instead of absolute paths
+- Improved VHDL top-level entity parsing and lookup
+- Refactored simulation execution logic for reusable command-based invocation
+- Improved cross-platform file path handling using `fsPath`
+- Improved extension stability when launching detached QuestaSim GUI processes
+
 ## [0.4.2] - 2026-05-21
 
 ### Improved
