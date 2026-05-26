@@ -4,7 +4,9 @@ on:
   push:
     tags:
       - "v*"
-      
+
+  workflow_dispatch:
+
 permissions:
   contents: write
 
@@ -19,15 +21,17 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm install
+      - run: npm ci
+
       - run: npm install -g @vscode/vsce
+
       - run: vsce package
-      
+
       - name: Publish to VSCode Marketplace
         run: vsce publish --packagePath *.vsix --pat ${{ secrets.VSCE_PAT }}
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.2.2
         with:
           files: "*.vsix"
         env:
