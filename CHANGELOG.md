@@ -1,6 +1,12 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.2] - 2026-05-26
+
+### Improved
+
+- Generate `.do` files directly by clicking a testbench in the panel view
+- Prompt user before overwriting existing `.do` files
 
 ## [0.5.1] - 2026-05-22
 

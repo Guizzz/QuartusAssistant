@@ -2,7 +2,7 @@
   "name": "quartus-assistant",
   "displayName": "Quartus Assistant",
   "description": "Quartus and QuestaSim integration tools for VS Code",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publisher": "Guizzz",
   "icon": "resources/icon.png",
   "engines": {
