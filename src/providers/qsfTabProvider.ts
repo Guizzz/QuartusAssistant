@@ -139,6 +139,11 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                     vscode.TreeItemCollapsibleState.None
                 );
                 item.resourceUri = uri;
+                item.command = {
+                    command: "quartus-assistant.generateDo",
+                    title: "Generate Questasim .do file",
+                    arguments: [relativePath]
+                };
                 return item;
             });
         }
