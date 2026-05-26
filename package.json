@@ -127,5 +127,14 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Guizzz/QuartusAssistant.git"
-  }
+  },
+  "keywords": [
+    "quartus",
+    "fpga",
+    "intel",
+    "vhdl",
+    "questasim",
+    "autocompile",
+    "simulation"
+  ]
 }

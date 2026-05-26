@@ -1,4 +1,8 @@
 # Quartus Assistant
+## FPGA workflow automation for Intel Quartus in VS Code
+
+![GitHub release](https://img.shields.io/github/v/release/Guizzz/QuartusAssistant)
+
 
 A modern Visual Studio Code extension that brings Intel Quartus and QuestaSim workflows directly into VS Code.
 
