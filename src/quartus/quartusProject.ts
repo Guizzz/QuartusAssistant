@@ -69,7 +69,8 @@ export async function getTopLevelEntityFile( topLevelEntityName: string)
 
     let topLevelFile: vscode.Uri | undefined;
 
-    for (const file of files) {
+    for (const file of files) 
+    {
         const content = Buffer.from(await vscode.workspace.fs.readFile(file)).toString("utf-8");
 
         const entityRegex = new RegExp(
@@ -84,3 +85,4 @@ export async function getTopLevelEntityFile( topLevelEntityName: string)
     }
     return undefined;
 }
+

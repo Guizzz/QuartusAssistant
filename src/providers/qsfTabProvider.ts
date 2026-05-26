@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { getQuestaFile, getSettingsFile, getWorkspace } from '../quartus/quartusProject';
-import { parseQsf, ProjectInfo } from '../lint/qsfParser';
-import { scanSimulationUnits } from '../simulation/simulationScanner';
+import { parseQsf, ProjectInfo } from '../parsers/qsfParser';
+import { scanSimulationUnits } from '../utils/simulationScanner';
+
 export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
     private _onDidChangeTreeData = new vscode.EventEmitter<void>();

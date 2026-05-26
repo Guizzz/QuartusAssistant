@@ -1,0 +1,22 @@
+import * as vscode from 'vscode';
+
+import { EntityIndexer } from './entityIndexer';
+import { VhdlDefinitionProvider } from '../providers/definitionProvider';
+import { EntityHighlightProvider } from '../providers/entityHighlightProvider';
+
+export function registerLanguageFeatures(context: vscode.ExtensionContext, indexer: EntityIndexer) 
+{
+    const definitionProvider =
+        vscode.languages.registerDefinitionProvider(
+            { language: 'vhdl' },
+            new VhdlDefinitionProvider(indexer)
+        );
+
+    const highlightProvider = new EntityHighlightProvider(indexer);
+    highlightProvider.activate();
+
+    context.subscriptions.push(
+        definitionProvider,
+        highlightProvider
+    );
+}

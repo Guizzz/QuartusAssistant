@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-import {scanSimulationUnits} from '../simulation/simulationScanner';
-import { generateDoFile } from '../simulation/doGenerator';
+import {scanSimulationUnits} from '../utils/simulationScanner';
+import { generateDoFile } from '../utils/doGenerator';
 import { getWorkspace } from '../quartus/quartusProject';
 
 async function writeFileWithConfirmOverwrite( uri: vscode.Uri, content: string, fileLabel?: string ): Promise<boolean> 
