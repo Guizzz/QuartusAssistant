@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 import { EntityIndexer } from './entityIndexer';
 import { VhdlDefinitionProvider } from '../providers/definitionProvider';
-import { EntityHighlightProvider } from '../providers/entityHighlightProvider';
+import { VhdlHighlightProvider } from '../providers/vhdlHighlightProvider';
 
 export function registerLanguageFeatures(context: vscode.ExtensionContext, indexer: EntityIndexer) 
 {
@@ -12,7 +12,7 @@ export function registerLanguageFeatures(context: vscode.ExtensionContext, index
             new VhdlDefinitionProvider(indexer)
         );
 
-    const highlightProvider = new EntityHighlightProvider(indexer);
+    const highlightProvider = new VhdlHighlightProvider(indexer);
     highlightProvider.activate();
 
     context.subscriptions.push(
