@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 
 
-
 export class QTokensProvider implements vscode.DocumentSemanticTokensProvider 
 {
 

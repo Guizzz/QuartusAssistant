@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
 
+export interface PinAssignment {
+    signal: string;
+    pin: string;
+    location: vscode.Location;
+}
 
 export interface EntitySymbol {
     name: string;

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { EntityIndexer } from '../services/entityIndexer';
+import { EntityIndexer } from '../../services/entityIndexer';
 
 export class VhdlDefinitionProvider implements vscode.DefinitionProvider {
 

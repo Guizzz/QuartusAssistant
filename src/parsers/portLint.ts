@@ -43,18 +43,14 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
 
         while ((match = portRegex.exec(portBlock)) !== null)
         {
-            const names = match[1]
-                .split(',')
-                .map(s => s.trim());
+            const names = match[1].split(',').map(s => s.trim());
 
             for (const name of names)
             {
-                // Controlla se esiste assegnazione pin
-                const assigned =
-                    qsf.pins.some(p =>
-                        p.signal === name ||
-                        p.signal.startsWith(name + '[')
-                    );
+                const assigned = qsf.pins.some(p =>
+                                    p.signal === name ||
+                                    p.signal.startsWith(name + '[')
+                                );
 
                 if (!assigned)
                 {
@@ -75,7 +71,7 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
 
         diagnostics.set(document.uri, diags);
     }
-
+    
     context.subscriptions.push(
         diagnostics,
         vscode.workspace.onDidOpenTextDocument(validate),

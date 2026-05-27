@@ -1,0 +1,27 @@
+import * as vscode from 'vscode';
+import { resolvePin } from '../quartus/qsfPinResolver';
+
+
+export class PinHoverProvider implements vscode.HoverProvider {
+
+    async provideHover( document: vscode.TextDocument, position: vscode.Position ): Promise<vscode.Hover | null>
+    {
+        if (document.languageId !== 'vhdl'){return null;}
+
+        const range = document.getWordRangeAtPosition( position);
+        if (!range) {return null;}
+
+        const word = document.getText(range);
+        const resolved = await resolvePin(word, document.uri);
+
+        if (!resolved) {return null;}
+
+        const markdown = new vscode.MarkdownString( [
+                    `**Signal:** \`${resolved.signal}\``,
+                    `**Pin:** \`${resolved.pin}\``
+                ].join('\n')
+            );
+
+        return new vscode.Hover( markdown,range);
+    }
+}

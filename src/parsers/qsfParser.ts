@@ -1,10 +1,6 @@
 import * as vscode from 'vscode';
 import { getTopLevelEntityFile } from '../quartus/quartusProject';
-
-interface PinAssignment {
-    signal: string;
-    pin: string;
-}
+import { PinAssignment } from '../types/types';
 
 interface TopLevel {
   entity: string
@@ -30,9 +26,11 @@ export async function parseQsf(fileUri: vscode.Uri) : Promise<ProjectInfo>
   let device: string | undefined;
   let topLevel: TopLevel | undefined;
   let outputFolder: string | undefined;
-  const pins: { signal: string; pin: string }[] = [];
+  const pins: PinAssignment[] = [];
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) 
+  {
+    const line = lines[i];
 
     if(line.trimStart().startsWith("#")) {continue;}
 
@@ -53,7 +51,10 @@ export async function parseQsf(fileUri: vscode.Uri) : Promise<ProjectInfo>
 
     match = line.match(/set_location_assignment (PIN_[A-Z0-9]+) -to (\w+)/);
     if (match) {
-      pins.push({ pin: match[1], signal: match[2] });
+      const position = new vscode.Position(i, 0);
+      const location = new vscode.Location(fileUri, position);
+
+      pins.push({ pin: match[1], signal: match[2] , location : location});
     }
   }
 

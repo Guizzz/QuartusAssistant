@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { QTokensProvider } from '../providers/qsfTokensProvider';
-import { DoTokenProvider } from '../providers/doTokenProvider';
+import { QTokensProvider } from '../providers/semanticTokens/qsfTokensProvider';
+import { DoTokenProvider } from '../providers/semanticTokens/doTokenProvider';
 
 export function registerSemanticTokens(context: vscode.ExtensionContext)
 {
