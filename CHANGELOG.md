@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2026-05-27
+
+### Feature
+
+- VHDL packages are now automatically discovered and indexed across the workspace.
+
+- Added **Go to Definition** support for VHDL packages.
+- You can now `Ctrl+Click` on package references declared with:
+
+  ```vhdl
+  use work.<package>.all;
+  ```
+
+and jump directly to the corresponding package declaration.
+
+* Added **Go to Definition** support for symbols declared inside VHDL packages.
+
+* You can now navigate to declarations of:
+
+  * constants
+  * types
+  * subtypes
+  * signals
+  * functions
+  * procedures
+
+  imported through:
+
+  ```vhdl
+  use work.<package>.all;
+  ```
+
+* Added semantic highlighting for:
+
+  * package references
+  * package symbols imported from workspace packages
+
+### Improved
+
+* Refactored entity highlighting into a generalized `VhdlHighlightProvider`.
+* Improved workspace indexing architecture to support both entities and packages.
+* Improved internal symbol resolution for package-scoped declarations.
+* Added case-insensitive indexing and lookup behavior for VHDL identifiers.
+
+
 ## [0.6.0] - 2026-05-26
 
 ### Feature
