@@ -1,6 +1,32 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [0.6.0] - 2026-05-26
+
+### Feature
+
+- Added **Go to Definition** support for VHDL entity instantiations.
+- You can now `Ctrl+Click` on entities instantiated with:
+  ```vhdl
+  entity work.<name>
+  ```
+
+and jump directly to the corresponding entity declaration in the workspace.
+
+- Added semantic highlighting for VHDL entities.
+- Entity names are highlighted only when a valid declaration exists in the workspace index.
+- Introduced automatic indexing of VHDL entities (`.vhd`, `.vhdl`).
+- The index is updated automatically when:
+  * VHDL files are saved
+  * files are created
+  * files are deleted
+
+### Improved
+
+* Refactored language features into modular architecture
+* Improved separation between parsing, indexing, and VSCode integration layers.
+
 ## [0.5.3] - 2026-05-26
 
 ### Improved
