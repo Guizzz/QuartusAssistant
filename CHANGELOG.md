@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2026-05-27
+
+### Feature
+
+* Added **Go to Definition** support for Quartus pin references.
+
+* You can now `Ctrl+Click` on pin usages and jump directly to the associated pin definition.
+
+* Added hover support for pin variables.
+
+* Hovering a pin-related variable now immediately shows the associated Quartus pin information.
+
+* Implemented automatic TreeView reload in the extension panel.
+
+* The panel now refreshes automatically after:
+
+  * creating a new testbench
+  * generating a new `.do` file
+
+### Improved
+
+* Improved extension workflow consistency by synchronizing panel updates with generated project files.
+* Updated the README with new extension snapshots and visual documentation.
+
+
 ## [0.6.1] - 2026-05-27
 
 ### Feature
