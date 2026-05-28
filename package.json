@@ -50,7 +50,7 @@
           ".vhd",
           ".vhdl"
         ],
-        "configuration": "./src/syntaxes/language-configuration.json"
+        "configuration": "./syntaxes/language-configuration.json"
       },
       {
         "id": "qsf",
@@ -114,7 +114,7 @@
       {
         "language": "vhdl",
         "scopeName": "source.vhdl",
-        "path": "./src/syntaxes/vhdl.tmLanguage.json"
+        "path": "./syntaxes/vhdl.tmLanguage.json"
       }
     ]
   },
