@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.8.1] - 2026-5-28
+
+### Fixed
+- Fixed VSCode engine compatibility mismatch during extension build.
+- Aligned `@types/vscode` version with the declared `engines.vscode` requirement.
 
 ## [0.8.0] - 2026-5-28
 
