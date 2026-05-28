@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0] - 2026-5-28
+
+### Feature
+
+- Added native VHDL syntax highlighting support directly inside Quartus Assistant.
+- The extension is now fully independent from external VHDL syntax extensions such as `Modern VHDL`.
+- Added semantic highlighting for:
+  * VHDL keywords and control statements
+  * arithmetic, logical and assignment operators
+  * entities, architectures, packages and components
+  * signals, variables, constants and ports
+  * process labels and instance labels
+  * VHDL built-in functions and attributes
+  * numeric literals and radix formats
+  * time units (`fs`, `ps`, `ns`, `us`, `ms`, ...)
+  * boolean literals (`true`, `false`)
+  * parentheses and brackets
+
+- Added custom TextMate grammar for VHDL source files.
+- Improved readability and editing experience for large VHDL projects.
+
 ## [0.7.0] - 2026-05-27
 
 ### Feature
