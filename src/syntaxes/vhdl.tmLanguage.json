@@ -1,0 +1,160 @@
+{
+  "scopeName": "source.vhdl",
+
+  "name": "VHDL",
+
+  "patterns": [
+
+    {
+      "name": "comment.line.double-dash.vhdl",
+      "match": "--.*$"
+    },
+
+    {
+      "name": "string.quoted.double.vhdl",
+      "begin": "\"",
+      "end": "\""
+    },
+
+    {
+      "match": "(?<=library\\s)\\w+",
+      "name": "support.library.vhdl"
+    },
+
+    {
+      "match": "(?<=use\\s)\\w+",
+      "name": "support.library.vhdl"
+    },
+
+    {
+      "match": "(?<=use\\s\\w+\\.)\\w+",
+      "name": "entity.name.namespace.vhdl"
+    },
+
+    {
+      "match": "(?<=entity\\s)\\w+",
+      "name": "entity.name.type.vhdl"
+    },
+
+    {
+      "match": "(?<=architecture\\s)\\w+",
+      "name": "entity.name.function.vhdl"
+    },
+
+    {
+      "match": "(?<=component\\s)\\w+",
+      "name": "entity.name.type.component.vhdl"
+    },
+
+    {
+      "match": "(?<=package\\s)\\w+",
+      "name": "entity.name.namespace.vhdl"
+    },
+
+    {
+      "match": "(?<=function\\s)\\w+",
+      "name": "entity.name.function.vhdl"
+    },
+
+    {
+      "match": "(?<=procedure\\s)\\w+",
+      "name": "entity.name.function.vhdl"
+    },
+
+    {
+      "match": "^\\s*(\\w+)\\s*:",
+      "captures": {
+        "1": {
+          "name": "entity.name.label.vhdl"
+        }
+      }
+    },
+
+    {
+      "match": "(?<=generic\\s*\\()[\\s\\S]*?(?=\\))",
+      "name": "variable.parameter.vhdl"
+    },
+
+    {
+      "match": "(?<=signal\\s)\\w+",
+      "name": "variable.other.signal.vhdl"
+    },
+
+    {
+      "match": "(?<=variable\\s)\\w+",
+      "name": "variable.other.vhdl"
+    },
+
+    {
+      "match": "(?<=constant\\s)\\w+",
+      "name": "constant.other.vhdl"
+    },
+
+    {
+      "match": "\\b(in|out|inout|buffer)\\b",
+      "name": "storage.modifier.direction.vhdl"
+    },
+
+    {
+      "name": "keyword.control.vhdl",
+
+      "match": "\\b(entity|architecture|signal|process|begin|end|is|port|generic|map|if|then|else|elsif|case|when|loop|for|while|generate|package|body|component|library|use|constant|type|subtype|record|array|function|procedure|variable|wait|until|downto|to|others|return|exit|next|assert|report|severity|configuration|block|alias|file|shared|pure|impure|after|transport|reject|null|open)\\b"
+    },
+
+    {
+      "name": "storage.type.vhdl",
+
+      "match": "\\b(std_logic|std_logic_vector|integer|unsigned|signed|boolean|string|natural|positive|bit|bit_vector|character|time|real)\\b"
+    },
+
+    {
+      "name": "support.function.vhdl",
+
+      "match": "\\b(rising_edge|falling_edge|resize|to_unsigned|to_signed|conv_integer|std_match|to_integer|to_stdlogicvector|unsigned|signed|std_logic_vector)\\b"
+    },
+
+    {
+      "name": "constant.numeric.vhdl",
+
+      "match": "\\b\\d+(?:_\\d+)*(?:\\.\\d+)?(?:ns|ps|us|ms|sec)?\\b"
+    },
+
+    {
+      "name": "constant.numeric.base.vhdl",
+
+      "match": "\\b[boxdBOXD]\"[0-9A-Fa-f_]+\""
+    },
+
+    {
+      "name": "support.type.attribute.vhdl",
+
+      "match": "'(event|range|length|left|right|high|low|ascending|image|value)"
+    },
+
+    {
+      "name": "keyword.operator.vhdl",
+
+      "match": "(<=|:=|=>|/=|=|<|>|\\+|-|\\*|/|&|not|and|or|nand|nor|xor|xnor|mod|rem|sll|srl|sla|sra|rol|ror)"
+    },
+
+    {
+      "name": "punctuation.section.parens.begin.vhdl",
+      "match": "\\("
+    },
+
+    {
+      "name": "punctuation.section.parens.end.vhdl",
+      "match": "\\)"
+    },
+
+    {
+      "name": "punctuation.section.brackets.begin.vhdl",
+      "match": "\\["
+    },
+
+    {
+      "name": "punctuation.section.brackets.end.vhdl",
+      "match": "\\]"
+    }
+  ]
+}
