@@ -2,12 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [0.8.4] - 2026-05-29
+
+### Changed
+- Rebranded extension from Quartus Assistant to VHDL Essentials
+
+### Added
+
+* Added hover information for VHDL entities
+* Added detailed hover support for entity ports
+* Hover now displays:
+  * port direction (`in`, `out`, `inout`, `buffer`)
+  * signal type (`std_logic`, `unsigned`, etc.)
+  * entity/package context
+* Added parsing support for entity port declarations
+* Added entity port indexing for future IntelliSense features
+
+![entity hover](resources/screen/entity_hover.png)
+
+### Improved
+
+* Improved VHDL symbol parsing engine
+* Refactored internal entity indexing structure
+* Enhanced navigation data model for upcoming language features
+* Improved compatibility with complex `port map` declarations
+* advanced semantic highlighting
+
+
 ## [0.8.3] - 2026-05-29
 
 ### Feature
 - Added semantic hover support for VHDL variables, signals, constants and entity ports.
 - Hover tooltips now display symbol kind, type information and declaration preview.
 - Added contextual hover rendering with syntax-highlighted VHDL code blocks.
+
+![var hover](resources/screen/var_hover.png)
 
 ### Improved
 - Improved source parsing for local declarations inside architectures and processes.
