@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { resolvePin } from '../quartus/qsfPinResolver';
+import { resolvePin } from '../../quartus/qsfPinResolver';
 
 
 export class PinHoverProvider implements vscode.HoverProvider {
@@ -15,12 +15,20 @@ export class PinHoverProvider implements vscode.HoverProvider {
         const resolved = await resolvePin(word, document.uri);
 
         if (!resolved) {return null;}
+        
+        const targetDoc = await vscode.workspace.openTextDocument(
+                                resolved.location.uri
+                            );
 
-        const markdown = new vscode.MarkdownString( [
-                    `**Signal:** \`${resolved.signal}\``,
-                    `**Pin:** \`${resolved.pin}\``
-                ].join('\n')
-            );
+        const line = targetDoc.lineAt(resolved.location.range.start.line).text;
+        
+        const markdown = new vscode.MarkdownString();
+        markdown.supportThemeIcons = true;
+
+        markdown.appendCodeblock(
+            line.trim(),
+            'qsf'
+        );
 
         return new vscode.Hover( markdown,range);
     }

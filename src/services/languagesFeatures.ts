@@ -3,8 +3,10 @@ import * as vscode from 'vscode';
 import { EntityIndexer } from './entityIndexer';
 import { VhdlDefinitionProvider } from '../providers/definitions/definitionProvider';
 import { VhdlHighlightProvider } from '../providers/vhdlHighlightProvider';
-import { PinHoverProvider } from '../providers/pinHoverProvider';
+import { PinHoverProvider } from '../providers/hover/pinHoverProvider';
 import { PinDefinitionProvider } from '../providers/definitions/pinDefinitionProvider';
+import { VarPackHoverProvider } from '../providers/hover/varPackHoverProvider';
+import { VarEntityHoverProvider } from '../providers/hover/varEntityHoverProvider';
 
 export function registerLanguageFeatures(context: vscode.ExtensionContext, indexer: EntityIndexer) 
 {
@@ -13,6 +15,16 @@ export function registerLanguageFeatures(context: vscode.ExtensionContext, index
                                     new VhdlDefinitionProvider(indexer)
                                 );
     
+    const varPackHoverProvider  = vscode.languages.registerHoverProvider(
+                                    'vhdl',
+                                    new VarPackHoverProvider(indexer)
+                                );
+
+    const varEntityHoverProvider  = vscode.languages.registerHoverProvider(
+                                    'vhdl',
+                                    new VarEntityHoverProvider()
+                                );
+
     const pinHoverProvider      = vscode.languages.registerHoverProvider(
                                     'vhdl',
                                     new PinHoverProvider()
@@ -29,8 +41,10 @@ export function registerLanguageFeatures(context: vscode.ExtensionContext, index
 
     context.subscriptions.push(
         definitionProvider,
-        pinDefinitionProvider,
+        varPackHoverProvider,
+        varEntityHoverProvider,
         pinHoverProvider,
+        pinDefinitionProvider,
         highlightProvider
     );
 }

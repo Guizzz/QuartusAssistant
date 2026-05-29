@@ -9,7 +9,8 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
             'number',
             'comment',
             'function',
-            'parameter'
+            'parameter',
+            'time'
         ],
         []
     );
@@ -140,6 +141,16 @@ export class DoTokenProvider implements vscode.DocumentSemanticTokensProvider {
                     5, // args
                     0
                 );
+            }
+
+            // unità temporali
+            const timeRegex = /\b\d+\s*(fs|ps|ns|us|ms|sec|min|hr)\b/g;
+            let m;
+            while ((m = timeRegex.exec(text))) 
+            {
+                const unit = m[1];
+
+                builder.push( line, m.index, unit.length, 6);
             }
         }
 

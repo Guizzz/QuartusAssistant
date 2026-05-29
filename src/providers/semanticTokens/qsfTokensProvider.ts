@@ -1,14 +1,13 @@
 import * as vscode from 'vscode';
 
-
 export class QTokensProvider implements vscode.DocumentSemanticTokensProvider 
 {
-
   private static legend = new vscode.SemanticTokensLegend([
     'keyword',
     'parameter',
     'string',
-    'comment'
+    'comment',
+    'number'
   ]);
 
   public static getLegend(): vscode.SemanticTokensLegend {
@@ -20,8 +19,8 @@ export class QTokensProvider implements vscode.DocumentSemanticTokensProvider
 
     const builder = new vscode.SemanticTokensBuilder(QTokensProvider.legend);
 
-    for (let i = 0; i < document.lineCount; i++) {
-
+    for (let i = 0; i < document.lineCount; i++)
+    {
       const line = document.lineAt(i).text;
 
       // commenti

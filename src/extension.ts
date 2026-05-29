@@ -42,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext)
 
     // VHDL indexing
     const indexer = new EntityIndexer();
-    void indexer.buildIndex();
+    await indexer.buildIndex();
 
     // Workspace listeners
     registerWorkspaceWatchers(context, indexer);

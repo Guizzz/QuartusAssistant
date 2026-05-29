@@ -1,38 +1,35 @@
 import * as vscode from 'vscode';
 import { parseEntities } from '../parsers/entityParser';
-import { PackageInfo } from '../types/types';
+import { PackageInfo, PackageSymbolInfo } from '../types/types';
 import { parsePackages } from '../parsers/packageParser';
 
 export class EntityIndexer {
 
     private entityMap    = new Map<string, vscode.Location>();
     private fileEntities = new Map<string, string[]>();
+    
     private packageMap   = new Map<string, PackageInfo>();
     private filePackages = new Map<string, string[]>();
 
-    async buildIndex() {
-
+    async buildIndex(): Promise<void>
+    {
         this.entityMap.clear();
         this.packageMap.clear();
         this.fileEntities.clear();
         this.filePackages.clear();
 
-        const files =  await vscode.workspace.findFiles( '**/*.{vhd,vhdl}' );
+        const files = await vscode.workspace.findFiles( '**/*.{vhd,vhdl}' );
 
-        for (const file of files) 
-        {
-            await this.indexFile(file);
-        }
+        await Promise.all( files.map(file => this.indexFile(file)) );
     }
 
-    async indexFile(file: vscode.Uri) {
-
+    async indexFile(file: vscode.Uri) 
+    {
         const path = file.fsPath;
         this.removeFile(path);
 
         const doc = await vscode.workspace.openTextDocument(file);
         const text = doc.getText();
-
 
         const entities = parseEntities(text);
         const entityNames: string[] = [];
@@ -55,19 +52,18 @@ export class EntityIndexer {
         const packages = parsePackages(text);
         const packageNames: string[] = [];
 
-        for (const pkg of packages) {
-
+        for (const pkg of packages) 
+        {
             packageNames.push(pkg.name);
 
             const pkgPos = doc.positionAt(pkg.offset);
-
-            const pkgLocation =
-                new vscode.Location(
-                    file,
-                    new vscode.Range(pkgPos, pkgPos)
-                );
-
-            const symbols = new Map<string, vscode.Location>();
+            const pkgLocation = new vscode.Location(file, new vscode.Range(pkgPos, pkgPos) );
+            const symbols = new Map< string,{
+                    location: vscode.Location;
+                    type: string;
+                    kind: string;
+                }
+            >();
 
             for (const symbol of pkg.symbols) 
             {
@@ -78,7 +74,14 @@ export class EntityIndexer {
                         new vscode.Range(symbolPos, symbolPos)
                     );
 
-                symbols.set( symbol.name, symbolLocation);
+                symbols.set(
+                    symbol.name,
+                    {
+                        location: symbolLocation,
+                        type: symbol.type,
+                        kind: symbol.kind
+                    }
+                );
             }
 
             this.packageMap.set(
@@ -90,11 +93,7 @@ export class EntityIndexer {
             );
         }
 
-        this.filePackages.set(
-            path,
-            packageNames
-        );
-
+        this.filePackages.set(path, packageNames);
     }
 
     removeFile(path: string) 
@@ -150,11 +149,29 @@ export class EntityIndexer {
             return undefined;
         }
         
-        return pkg.symbols.get(symbolName);
+        return pkg.symbols.get(symbolName)?.location;
     }
 
     getAllPackages() 
     {
         return [...this.packageMap.keys()];
+    }
+
+    public getSymbol( name: string ): { packageName: string; symbol: PackageSymbolInfo } | undefined 
+    {
+        for (const [packageName, pkg] of this.packageMap) 
+        {
+            const symbol = pkg.symbols.get(name);
+
+            if (symbol) 
+            {
+                return {
+                    packageName,
+                    symbol
+                };
+            }
+        }
+
+        return undefined;
     }
 }
