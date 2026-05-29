@@ -6,9 +6,25 @@ export interface PinAssignment {
     location: vscode.Location;
 }
 
-export interface EntitySymbol {
+export interface EntityPort
+{
+    name: string;
+    direction: string;
+    type: string;
+    offset: number;
+}
+
+export interface EntitySymbol
+{
     name: string;
     offset: number;
+    ports: EntityPort[];
+}
+
+export interface EntityInfo
+{
+    location: vscode.Location;
+    ports: Map<string, EntityPort>;
 }
 
 export interface ParsedPackage {

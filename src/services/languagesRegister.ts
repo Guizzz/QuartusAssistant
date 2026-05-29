@@ -7,6 +7,7 @@ import { PinHoverProvider } from '../providers/hover/pinHoverProvider';
 import { PinDefinitionProvider } from '../providers/definitions/pinDefinitionProvider';
 import { VarPackHoverProvider } from '../providers/hover/varPackHoverProvider';
 import { VarEntityHoverProvider } from '../providers/hover/varEntityHoverProvider';
+import { EntityHoverProvider } from '../providers/hover/entityHoverProvider';
 
 export function registerLanguageFeatures(context: vscode.ExtensionContext, indexer: EntityIndexer) 
 {
@@ -18,6 +19,11 @@ export function registerLanguageFeatures(context: vscode.ExtensionContext, index
     const varPackHoverProvider  = vscode.languages.registerHoverProvider(
                                     'vhdl',
                                     new VarPackHoverProvider(indexer)
+                                );
+
+    const entityHoverProvider  = vscode.languages.registerHoverProvider(
+                                    'vhdl',
+                                    new EntityHoverProvider(indexer)
                                 );
 
     const varEntityHoverProvider  = vscode.languages.registerHoverProvider(
@@ -42,6 +48,7 @@ export function registerLanguageFeatures(context: vscode.ExtensionContext, index
         definitionProvider,
         varPackHoverProvider,
         varEntityHoverProvider,
+        entityHoverProvider,
         pinHoverProvider,
         pinDefinitionProvider,
         highlightProvider

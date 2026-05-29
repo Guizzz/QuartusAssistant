@@ -80,8 +80,12 @@ export class QsfProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
             }
 
             if (this.qsfData.topLevel) {
+                const relativePath = vscode.workspace.asRelativePath(this.qsfData.topLevel.path);
+
                 const deviceItem = new vscode.TreeItem("TOP LEVEL");
-                deviceItem.description = this.qsfData.topLevel.entity;
+                
+                deviceItem.description = relativePath;
+                deviceItem.resourceUri = this.qsfData.topLevel.path;
                 deviceItem.iconPath = new vscode.ThemeIcon("home");
                 deviceItem.command = {
                     command: "vscode.open",

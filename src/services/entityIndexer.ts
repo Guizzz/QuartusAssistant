@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { parseEntities } from '../parsers/entityParser';
-import { PackageInfo, PackageSymbolInfo } from '../types/types';
+import { EntityInfo, EntityPort, PackageInfo, PackageSymbolInfo } from '../types/types';
 import { parsePackages } from '../parsers/packageParser';
 
 export class EntityIndexer 
 {
-    private entityMap    = new Map<string, vscode.Location>();
+    
+    private entityMap = new Map<string, EntityInfo>();
     private fileEntities = new Map<string, string[]>();
     
     private packageMap   = new Map<string, PackageInfo>();
@@ -34,7 +35,7 @@ export class EntityIndexer
         const entities = parseEntities(text);
         const entityNames: string[] = [];
 
-        for (const entity of entities) 
+        for (const entity of entities)
         {
             entityNames.push(entity.name);
             const pos = doc.positionAt(entity.offset);
@@ -44,7 +45,21 @@ export class EntityIndexer
                 new vscode.Range(pos, pos)
             );
 
-            this.entityMap.set(entity.name, location);
+            // converte le porte in mappa
+            const ports = new Map<string, EntityPort>();
+
+            for (const port of entity.ports)
+            {
+                ports.set(port.name, port);
+            }
+
+            this.entityMap.set(
+                entity.name,
+                {
+                    location,
+                    ports
+                }
+            );
         }
 
         this.fileEntities.set(path, entityNames);
@@ -112,7 +127,7 @@ export class EntityIndexer
 
     getEntityLocation(name: string) 
     {
-        return this.entityMap.get(name);
+        return this.entityMap.get(name)?.location;
     }
 
     hasEntity(name: string) 
@@ -157,7 +172,7 @@ export class EntityIndexer
         return [...this.packageMap.keys()];
     }
 
-    public getSymbol( name: string ): { packageName: string; symbol: PackageSymbolInfo } | undefined 
+    getSymbol( name: string ): { packageName: string; symbol: PackageSymbolInfo } | undefined 
     {
         for (const [packageName, pkg] of this.packageMap) 
         {
@@ -169,6 +184,19 @@ export class EntityIndexer
                     packageName,
                     symbol
                 };
+            }
+        }
+
+        return undefined;
+    }
+
+    getEntity(name: string) 
+    {
+        for (const [entityName, entity] of this.entityMap) 
+        {
+            if (entityName === name) 
+            {
+                return entity;
             }
         }
 
