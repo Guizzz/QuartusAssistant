@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.8.2] - 2026-5-28
+## [0.8.3] - 2026-05-29
+
+### Feature
+- Added semantic hover support for VHDL variables, signals, constants and entity ports.
+- Hover tooltips now display symbol kind, type information and declaration preview.
+- Added contextual hover rendering with syntax-highlighted VHDL code blocks.
+
+### Improved
+- Improved source parsing for local declarations inside architectures and processes.
+- Added support for port direction visualization (`in`, `out`, `inout`, `buffer`) in hover information.
+- Enhanced IntelliSense foundations for future navigation and symbol indexing features.
+
+## [0.8.2] - 2026-05-28
 
 ### Fixed
 - Fixed VHDL syntax highlighting not working in packaged `.vsix` builds
@@ -10,13 +22,13 @@ All notable changes to this project will be documented in this file.
 - Moved `syntaxes/` outside `src/` to avoid `.vscodeignore` exclusion issues
 
 
-## [0.8.1] - 2026-5-28
+## [0.8.1] - 2026-05-28
 
 ### Fixed
 - Fixed VSCode engine compatibility mismatch during extension build.
 - Aligned `@types/vscode` version with the declared `engines.vscode` requirement.
 
-## [0.8.0] - 2026-5-28
+## [0.8.0] - 2026-05-28
 
 ### Feature
 
@@ -42,15 +54,10 @@ All notable changes to this project will be documented in this file.
 ### Feature
 
 * Added **Go to Definition** support for Quartus pin references.
-
 * You can now `Ctrl+Click` on pin usages and jump directly to the associated pin definition.
-
 * Added hover support for pin variables.
-
 * Hovering a pin-related variable now immediately shows the associated Quartus pin information.
-
 * Implemented automatic TreeView reload in the extension panel.
-
 * The panel now refreshes automatically after:
 
   * creating a new testbench
@@ -67,7 +74,6 @@ All notable changes to this project will be documented in this file.
 ### Feature
 
 - VHDL packages are now automatically discovered and indexed across the workspace.
-
 - Added **Go to Definition** support for VHDL packages.
 - You can now `Ctrl+Click` on package references declared with:
 
@@ -78,7 +84,6 @@ All notable changes to this project will be documented in this file.
 and jump directly to the corresponding package declaration.
 
 * Added **Go to Definition** support for symbols declared inside VHDL packages.
-
 * You can now navigate to declarations of:
 
   * constants
