@@ -3,8 +3,8 @@ import { parseEntities } from '../parsers/entityParser';
 import { PackageInfo, PackageSymbolInfo } from '../types/types';
 import { parsePackages } from '../parsers/packageParser';
 
-export class EntityIndexer {
-
+export class EntityIndexer 
+{
     private entityMap    = new Map<string, vscode.Location>();
     private fileEntities = new Map<string, string[]>();
     

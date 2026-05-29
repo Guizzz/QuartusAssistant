@@ -4,16 +4,14 @@ import { registerFlashCommand } from './commands/flash';
 import { registerSetQuartusPathCommand } from './commands/setPath';
 import { setupMaterialIcons } from './ui/setIcon';
 import { createStatusBar, updateButtonsVisibility } from './ui/statusBar';
-import { registerQsfLint } from './parsers/qsfLint';
-import { registerTopLevelPortLint } from './parsers/portLint';
 import { registerGenSimulationUnit } from './commands/genDoFile';
 import { registerRunSimulationUnit } from './commands/runDoFile';
 import { EntityIndexer } from './services/entityIndexer';
 import { registerWorkspaceWatchers } from './services/workspaceWatcher';
-import { registerLanguageFeatures } from './services/languagesFeatures';
-import { registerSemanticTokens } from './services/semanticTokens';
+import { registerLanguageFeatures } from './services/languagesRegister';
 import { registerUiWatchers } from './ui/uiWatcher';
 import { registerQsfView } from './services/qsfViewService';
+import { registerLintFeature } from './services/lintRegister';
 
 
 export async function activate(context: vscode.ExtensionContext) 
@@ -33,9 +31,7 @@ export async function activate(context: vscode.ExtensionContext)
     registerRunSimulationUnit(context);
 
     // Lint
-    registerQsfLint(context);
-    registerTopLevelPortLint(context);
-    registerSemanticTokens(context);
+    registerLintFeature(context);
 
     // Tree View
     await registerQsfView(context);

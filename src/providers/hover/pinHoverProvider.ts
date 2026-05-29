@@ -16,18 +16,14 @@ export class PinHoverProvider implements vscode.HoverProvider {
 
         if (!resolved) {return null;}
         
-        const targetDoc = await vscode.workspace.openTextDocument(
-                                resolved.location.uri
-                            );
-
+        const targetDoc = await vscode.workspace.openTextDocument(resolved.location.uri);
         const line = targetDoc.lineAt(resolved.location.range.start.line).text;
-        
         const markdown = new vscode.MarkdownString();
         markdown.supportThemeIcons = true;
 
         markdown.appendCodeblock(
             line.trim(),
-            'qsf'
+            'quartus'
         );
 
         return new vscode.Hover( markdown,range);

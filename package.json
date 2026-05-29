@@ -53,22 +53,14 @@
         "configuration": "./syntaxes/language-configuration.json"
       },
       {
-        "id": "qsf",
+        "id": "quartus",
         "extensions": [
-          ".qsf"
-        ],
-        "aliases": [
-          "QSF",
-          "Quartus Settings File"
-        ]
-      },
-      {
-        "id": "qpf",
-        "extensions": [
+          ".qsf",
           ".qpf"
         ],
         "aliases": [
-          "QPF",
+          "Quartus",
+          "Quartus Settings File",
           "Quartus Project File"
         ]
       },
@@ -115,6 +107,16 @@
         "language": "vhdl",
         "scopeName": "source.vhdl",
         "path": "./syntaxes/vhdl.tmLanguage.json"
+      },
+      {
+        "language": "questasim-do",
+        "scopeName": "source.do",
+        "path": "./syntaxes/do.tmLanguage.json"
+      },
+      {
+        "language": "quartus",
+        "scopeName": "source.quartus",
+        "path": "./syntaxes/quartus.tmLanguage.json"
       }
     ]
   },

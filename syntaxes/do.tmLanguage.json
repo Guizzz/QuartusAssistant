@@ -1,0 +1,91 @@
+{
+  "scopeName": "source.do",
+  "name": "ModelSim DO",
+
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#time_units" },
+    { "include": "#keywords" },
+    { "include": "#functions" },
+    { "include": "#parameters" }
+  ],
+
+  "repository": {
+
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.do",
+          "match": "#.*$"
+        }
+      ]
+    },
+
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.do",
+          "match": "\"([^\"\\\\]|\\\\.)*\""
+        }
+      ]
+    },
+
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.do",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    },
+
+    "time_units": {
+      "patterns": [
+        {
+          "captures": {
+            "1": {
+              "name": "constant.numeric.do"
+            },
+            "2": {
+              "name": "storage.type.time.do"
+            }
+          },
+          "match": "\\b(\\d+)\\s*(fs|ps|ns|us|ms|sec|min|hr)\\b"
+        }
+      ]
+    },
+
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.do",
+          "match": "(?i)\\b(vlib|vmap|vcom|vlog|vsim|vdel|run|add|wave|force|restart|quit|do|if|file|while|foreach|proc|set|transcript)\\b"
+        }
+      ]
+    },
+
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.do",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()"
+        }
+      ]
+    },
+
+    "parameters": {
+      "patterns": [
+        {
+          "captures": {
+            "1": {
+              "name": "variable.parameter.do"
+            }
+          },
+          "match": "-(\\w+)(?:=[^\\s]+)?"
+        }
+      ]
+    }
+  }
+}

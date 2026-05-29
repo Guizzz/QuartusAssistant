@@ -35,7 +35,6 @@ export function registerLanguageFeatures(context: vscode.ExtensionContext, index
                                     new PinDefinitionProvider()
                                 );
     
-
     const highlightProvider = new VhdlHighlightProvider(indexer);
     highlightProvider.activate();
 

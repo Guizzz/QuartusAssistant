@@ -1,0 +1,60 @@
+{
+  "scopeName": "source.quartus",
+  "name": "Quartus",
+
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#keywords" },
+    { "include": "#parameters" },
+    { "include": "#strings" },
+    { "include": "#numbers" }
+  ],
+
+  "repository": {
+
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.quartus",
+          "match": "#.*$"
+        }
+      ]
+    },
+
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.quartus",
+          "match": "\\b(set_global_assignment|set_location_assignment|project_new|project_open|project_close)\\b"
+        }
+      ]
+    },
+
+    "parameters": {
+      "patterns": [
+        {
+          "name": "variable.parameter.quartus",
+          "match": "-\\w+"
+        }
+      ]
+    },
+
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.quartus",
+          "match": "\"(?:\\\\.|[^\"])*\""
+        }
+      ]
+    },
+
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.quartus",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    }
+  }
+}

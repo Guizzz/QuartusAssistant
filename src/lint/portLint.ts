@@ -1,63 +1,63 @@
 import * as vscode from 'vscode';
-import { parseQsf } from './qsfParser';
+import { parseQsf } from '../parsers/qsfParser';
 import { getSettingsFile } from '../quartus/quartusProject';
 
-export function registerTopLevelPortLint(context: vscode.ExtensionContext)
+export class TopLevelPortLint
 {
-    const diagnostics = vscode.languages.createDiagnosticCollection('vhdl-qsf');
+    private diagnostics = vscode.languages.createDiagnosticCollection('vhdl-qsf');
 
-    async function validate(document: vscode.TextDocument)
+    constructor(private context: vscode.ExtensionContext)
+    {
+        context.subscriptions.push(
+            vscode.workspace.onDidOpenTextDocument(doc => this.validate(doc)),
+            vscode.workspace.onDidChangeTextDocument(e => this.validate(e.document))
+        );
+    }
+
+    async validate(document: vscode.TextDocument): Promise<void>
     {
         if (!document.fileName.endsWith('.vhd')) { return; }
 
         const text = document.getText();
         const entityMatch = text.match(/entity\s+(\w+)\s+is/i);
-
         if (!entityMatch) { return; }
 
         const entityName = entityMatch[1];
         const qsfFile = await getSettingsFile();
-
-        if (!qsfFile) {return;}
+        if (!qsfFile) { return; }
 
         const qsf = await parseQsf(qsfFile);
-
-        if ( !qsf.topLevel || qsf.topLevel.entity.toLowerCase() !== entityName.toLowerCase() )
+        // controlla che il file sia il top-level
+        if (!qsf.topLevel || qsf.topLevel.entity.toLowerCase() !== entityName.toLowerCase())
         {
-            diagnostics.delete(document.uri);
+            this.diagnostics.delete(document.uri);
             return;
         }
 
         const diags: vscode.Diagnostic[] = [];
         const portBlockMatch = text.match(/port\s*\(([\s\S]*?)\)\s*;/im);
-
-        if (!portBlockMatch) 
+        
+        if (!portBlockMatch)
         {
-            diagnostics.set(document.uri, diags);
+            this.diagnostics.set(document.uri, diags);
             return;
         }
 
         const portBlock = portBlockMatch[1];
         const portRegex = /(\w+(?:\s*,\s*\w+)*)\s*:\s*(in|out|inout)/gi;
-        let match;
 
+        let match: RegExpExecArray | null;
         while ((match = portRegex.exec(portBlock)) !== null)
         {
             const names = match[1].split(',').map(s => s.trim());
-
             for (const name of names)
             {
-                const assigned = qsf.pins.some(p =>
-                                    p.signal === name ||
-                                    p.signal.startsWith(name + '[')
-                                );
-
+                const assigned = qsf.pins.some(p => p.signal === name || p.signal.startsWith(name + '[') );
                 if (!assigned)
                 {
                     const absoluteIndex = text.indexOf(match[0]);
                     const start = document.positionAt(absoluteIndex);
                     const end = start.translate(0, name.length);
-
                     diags.push(
                         new vscode.Diagnostic(
                             new vscode.Range(start, end),
@@ -68,13 +68,11 @@ export function registerTopLevelPortLint(context: vscode.ExtensionContext)
                 }
             }
         }
-
-        diagnostics.set(document.uri, diags);
+        this.diagnostics.set(document.uri, diags);
     }
-    
-    context.subscriptions.push(
-        diagnostics,
-        vscode.workspace.onDidOpenTextDocument(validate),
-        vscode.workspace.onDidChangeTextDocument(e =>validate(e.document))
-    );
+
+    dispose(): void
+    {
+        this.diagnostics.dispose();
+    }
 }
